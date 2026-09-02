@@ -798,14 +798,33 @@ svg [fill="none"],.type__ico,.logo svg{fill:none}
   padding:clamp(14px,2.4vw,30px);
 }
 .lb__bar{display:flex;justify-content:space-between;align-items:center;gap:16px}
-.lb__x,.lb__nav button{
+.lb__x,.lb__nav button,.lb__controls button{
   background:none;border:1px solid var(--line);color:var(--ash);
   min-width:44px;min-height:44px;cursor:pointer;
   font-family:var(--mono);font-size:12px;
   transition:color .25s,border-color .25s;
 }
-.lb__x:hover,.lb__nav button:hover{color:var(--bone);border-color:var(--ash-dim)}
+.lb__x:hover,.lb__nav button:hover,.lb__controls button:hover{color:var(--bone);border-color:var(--ash-dim)}
 .lb__nav{display:flex;gap:8px}
+
+/* playback + paging, bottom right; close stays in the top bar */
+.lb__controls{
+  position:absolute;z-index:3;
+  right:clamp(14px,2.4vw,30px);bottom:clamp(14px,2.4vw,30px);
+  display:flex;align-items:center;gap:8px;
+}
+.lb__progress{
+  display:block;width:44px;height:2px;background:var(--line);
+  margin-right:4px;overflow:hidden;
+}
+.lb__progress i{
+  display:block;width:100%;height:100%;background:var(--k27);
+  transform:scaleX(0);transform-origin:left;
+}
+.lb__progress.run i{animation:lbfill var(--lb-delay,4200ms) linear forwards}
+@keyframes lbfill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* on narrow screens keep the caption clear of the controls */
+@media(max-width:620px){.lb__cap{padding-bottom:56px}}
 .lb__stage{
   flex:1;display:flex;align-items:center;justify-content:center;
   min-height:0;padding-block:clamp(12px,2vw,22px);
@@ -1498,8 +1517,6 @@ svg [fill="none"],.type__ico,.logo svg{fill:none}
   <div class="lb__bar">
     <span class="u-mono" id="lbIndex"></span>
     <div class="lb__nav">
-      <button type="button" id="lbPrev" aria-label="Previous project">←</button>
-      <button type="button" id="lbNext" aria-label="Next project">→</button>
       <button type="button" class="lb__x" id="lbClose" aria-label="Close">✕</button>
     </div>
   </div>
@@ -1507,6 +1524,12 @@ svg [fill="none"],.type__ico,.logo svg{fill:none}
   <div class="lb__cap">
     <b id="lbTitle"></b>
     <span class="u-mono" id="lbSector"></span>
+  </div>
+  <div class="lb__controls">
+    <span class="lb__progress" id="lbProgress" aria-hidden="true"><i></i></span>
+    <button type="button" id="lbPlay" aria-label="Pause slideshow" aria-pressed="true">❙❙</button>
+    <button type="button" id="lbPrev" aria-label="Previous image">←</button>
+    <button type="button" id="lbNext" aria-label="Next image">→</button>
   </div>
 </div>
 
@@ -1652,6 +1675,38 @@ function visiblePlates(){
   cards.forEach(function(c){ if(!c.hidden) out=out.concat(platesOf(c)); });
   return out;
 }
+/* --- slideshow --------------------------------------------------
+   Advances on a timer; held down = paused, released = resumes.
+   Honours prefers-reduced-motion and offers an explicit pause
+   control, so the auto-advance is never the only way to stop it. */
+var SLIDE_MS=4200, slideTimer=null, held=false, playing=true;
+var lbReduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var lbPlay=document.getElementById("lbPlay");
+var lbProgress=document.getElementById("lbProgress");
+
+function paintProgress(running){
+  if(!lbProgress) return;
+  lbProgress.classList.remove("run");
+  void lbProgress.offsetWidth;            /* restart the animation */
+  if(running) lbProgress.classList.add("run");
+}
+function stopSlide(){ clearTimeout(slideTimer); slideTimer=null; paintProgress(false); }
+function scheduleSlide(){
+  clearTimeout(slideTimer); slideTimer=null;
+  var running = playing && !held && !lbReduce && !lb.hidden && visiblePlates().length>1;
+  paintProgress(running);
+  if(running) slideTimer=setTimeout(function(){ step(1); }, SLIDE_MS);
+}
+function setPlaying(on){
+  playing=on;
+  if(lbPlay){
+    lbPlay.textContent = on ? "\u2759\u2759" : "\u25B6";
+    lbPlay.setAttribute("aria-label", on ? "Pause slideshow" : "Play slideshow");
+    lbPlay.setAttribute("aria-pressed", String(on));
+  }
+  scheduleSlide();
+}
+
 function show(i){
   current=i;
   var p=PLATES[i];
@@ -1661,6 +1716,7 @@ function show(i){
   lbSector.textContent=p.c+" \u00B7 "+p.k;
   var vis=visiblePlates(), at=vis.indexOf(i);
   lbIndex.textContent=(at<0?1:at+1)+" / "+vis.length;
+  scheduleSlide();
 }
 function openLb(i){
   lastFocus=document.activeElement;
@@ -1668,8 +1724,11 @@ function openLb(i){
   lb.hidden=false;
   document.body.style.overflow="hidden";
   document.getElementById("lbClose").focus();
+  held=false;
+  setPlaying(!lbReduce);
 }
 function closeLb(){
+  stopSlide();
   lb.hidden=true;
   document.body.style.overflow="";
   if(lastFocus) lastFocus.focus();
@@ -1692,6 +1751,16 @@ document.getElementById("lbClose").addEventListener("click", closeLb);
 document.getElementById("lbPrev").addEventListener("click", function(){ step(-1); });
 document.getElementById("lbNext").addEventListener("click", function(){ step(1); });
 lb.addEventListener("click", function(e){ if(e.target===lb) closeLb(); });
+
+/* Touch or hold anywhere in the lightbox pauses; releasing resumes. */
+function holdOn(){ if(held) return; held=true; stopSlide(); }
+function holdOff(){ if(!held) return; held=false; scheduleSlide(); }
+lb.addEventListener("pointerdown", holdOn);
+window.addEventListener("pointerup", holdOff);
+window.addEventListener("pointercancel", holdOff);
+lb.addEventListener("touchstart", holdOn, {passive:true});
+window.addEventListener("touchend", holdOff, {passive:true});
+if(lbPlay) lbPlay.addEventListener("click", function(){ setPlaying(!playing); });
 
 document.addEventListener("keydown", function(e){
   if(lb.hidden) return;
