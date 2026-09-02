@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="en" data-type="jakarta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#08090A">
+<title>Interstellar Lighting — Architectural Lighting Design, Kochi</title>
+<link rel="preload" as="image" href="img/64c703f40659.webp" fetchpriority="high">
+<link rel="preload" as="font" type="font/woff" href="fonts/ac2640bc16fa.woff" crossorigin>
+<link rel="preload" as="font" type="font/woff" href="fonts/dc019842e572.woff" crossorigin>
+<meta name="description" content="Interstellar is a lighting design practice in Kochi, Kerala. Bespoke architectural lighting, controls, project support and supply — from concept to commissioning.">
+
+<style>
+/* Fonts embedded from the MESHLE style guideline — no external requests */
+@font-face{
+  font-family:'Plus Jakarta Sans';font-style:normal;font-weight:400;font-display:swap;
+  src:url(fonts/ac2640bc16fa.woff) format('woff');
+}
+@font-face{
+  font-family:'Plus Jakarta Sans';font-style:normal;font-weight:500;font-display:swap;
+  src:url(fonts/dc019842e572.woff) format('woff');
+}
+@font-face{
+  font-family:'Plus Jakarta Sans';font-style:normal;font-weight:600;font-display:swap;
+  src:url(fonts/2fe076db8f8b.woff) format('woff');
+}
+@font-face{
+  font-family:'Plus Jakarta Sans';font-style:normal;font-weight:700;font-display:swap;
+  src:url(fonts/5984a05c448a.woff) format('woff');
+}
+@font-face{
+  font-family:'Plus Jakarta Sans';font-style:normal;font-weight:800;font-display:swap;
+  src:url(fonts/ce7dc05371b0.woff) format('woff');
+}
+@font-face{
+  font-family:'Caveat';font-style:normal;font-weight:600;font-display:swap;
+  src:url(fonts/ff5541be8d3c.woff) format('woff');
+}
+@font-face{
+  font-family:'Caveat';font-style:normal;font-weight:700;font-display:swap;
+  src:url(fonts/58951d280a2a.woff) format('woff');
+}
+@font-face{
+  font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;
+  src:url(fonts/c3e7bb9d5ab6.woff) format('woff');
+}
+@font-face{
+  font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;
+  src:url(fonts/74a58b8bb878.woff) format('woff');
+}
+
+/* ============================================================
+   KELVIN FIELD — design tokens
+   ============================================================ */
+:root{
+  --void:#08090A;
+  --void-rgb:8,9,10;
+  --bone-rgb:239,235,228;
+  --lb-rgb:6,7,8;
+  --readout-dim:1;      /* JS multiplies the blackbody readout by this */
+  --shell:#101216;
+  --shell-2:#171A1F;
+  --line:#25282E;
+  --line-soft:#1B1E23;
+  --bone:#EFEBE4;
+  --ash:#9C988F;
+  --ash-dim:#87837C;
+
+  /* the spectrum — used as a scale, not as a brand colour */
+  --k27:#F2B15C;
+  --k40:#F6E4C4;
+  --k65:#B9D2EC;
+
+  --gut: clamp(20px, 5vw, 64px);
+  --rail: 96px;
+  --maxw: 1280px;
+
+  --mono:"IBM Plex Mono", ui-monospace, monospace;
+  --disp:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --read:"Newsreader", Georgia, serif;
+
+  --night:#233549;
+  --stage-bg:#000;
+  --ease:cubic-bezier(.22,.61,.36,1);
+
+  color-scheme:dark;
+}
+
+
+
+/* ============================================================
+   MESHLE THEME — palette and type taken from the MESHLE
+   style guideline. Fonts are self-hosted (see the @font-face block above),
+   so this build makes no external requests.
+   ============================================================ */
+[data-theme="meshle"]{
+  color-scheme:light;
+  --night:#2E3D52;
+  --void:#FBF6EF;          /* --paper */
+  --void-rgb:251,246,239;
+  --shell:#F7F2EA;         /* --card-alt */
+  --shell-2:#FFFFFF;       /* --card   */
+  --line:#EAE1D2;          /* --border */
+  --line-soft:#EFE7DA;
+  --bone:#111827;          /* --ink      16.5:1 */
+  --bone-rgb:17,24,39;
+  --ash:#4B5563;           /* --ink-soft  7.0:1 */
+  --ash-dim:#716C61;       /* --muted, darkened to clear AA at 11px */
+  --card:#FFFFFF;
+
+  /* the Kelvin scale, mapped onto the guideline's own hues */
+  --k27:#7C5E4A;           /* --accent        5.5:1 */
+  --k40:#8A8478;           /* --muted, graphic use only */
+  --k65:#2F6FC7;           /* --info          4.6:1 */
+  --ochre:#B4780C;         /* --warning, graphic use only */
+  --accent-soft:#D9C6AE;
+  --accent-pale:#F1E7D8;
+
+  --lb-rgb:251,246,239;
+  --stage-bg:#F1E7D8;
+  --readout-dim:.55;
+
+  --r-lg:20px; --r-md:14px; --r-sm:9px;
+}
+/* ============================================================
+   JAKARTA TYPEFACE SET — Plus Jakarta Sans / IBM Plex Mono / Caveat,
+   embedded from the MESHLE guideline. Applied via data-type so the
+   typeface is independent of the colour scheme.
+   ============================================================ */
+[data-type="jakarta"]{
+  --disp:'Plus Jakarta Sans', system-ui, sans-serif;
+  --read:'Plus Jakarta Sans', system-ui, sans-serif;
+  --mono:'IBM Plex Mono', ui-monospace, monospace;
+  --hand:'Caveat', cursive;
+}
+/* the embedded set has no 300 weight — pin 400 rather than let the
+   browser approximate, which triggers synthetic thinning */
+[data-type="jakarta"] body{font-size:15.5px;line-height:1.65;font-weight:400}
+
+/* Plus Jakarta Sans has no width axis, so the display voice is carried by
+   weight and tight tracking instead of Archivo's expanded thin forms. */
+[data-type="jakarta"] .u-disp,
+[data-type="jakarta"] .disc__ttl,
+[data-type="jakarta"] .metric__t,
+[data-type="jakarta"] .mast__meta b,
+[data-type="jakarta"] [data-type="jakarta"] .mast h1,
+[data-type="jakarta"] .cta h2,
+[data-type="jakarta"] .readout__k{font-weight:800;letter-spacing:-.042em}
+[data-type="jakarta"] .type__t,
+[data-type="jakarta"] .card__t,
+[data-type="jakarta"] .contacts b,
+[data-type="jakarta"] .console__desc b,
+[data-type="jakarta"] .lb__cap b,
+[data-type="jakarta"] .mat__list b{font-weight:600;letter-spacing:-.012em}
+[data-type="jakarta"] .u-lede{font-weight:400;color:var(--ash)}
+
+/* Caveat is the guideline's annotation voice — reserved for the hero
+   emphasis only. The pull-quote now matches "1200+ completed projects."
+   in weight and size, so it inherits the shared .u-disp ramp instead. */
+[data-type="jakarta"] .mast h1 em{
+  font-family:var(--hand);font-style:normal;font-weight:700;
+  letter-spacing:0;color:var(--k27);
+}
+[data-type="jakarta"] .mast h1{line-height:1.02;max-width:15ch}
+[data-type="jakarta"] .mast h1 em{font-size:1.04em}
+[data-type="jakarta"] .cta h2{line-height:1.02}
+[data-type="jakarta"] .quote blockquote{font-weight:600;letter-spacing:-.02em}
+
+/* the handbook's rounded, carded surfaces */
+[data-theme="meshle"] .card__ph,
+[data-theme="meshle"] .split__fig img,
+[data-theme="meshle"] .console__stage{border-radius:var(--r-lg);overflow:hidden}
+[data-theme="meshle"] .metric,
+[data-theme="meshle"] .type{background:var(--card)}
+[data-theme="meshle"] .metrics,
+[data-theme="meshle"] .types{border-radius:var(--r-md);overflow:hidden}
+[data-theme="meshle"] .console__panel{
+  background:var(--card);border-radius:var(--r-md);border-color:var(--line);
+}
+[data-theme="meshle"] .filter{border-radius:999px}
+[data-theme="meshle"] .sectors li{border-radius:999px;background:var(--accent-pale);border-color:transparent;color:var(--k27)}
+[data-theme="meshle"] .lb__x,[data-theme="meshle"] .lb__nav button{border-radius:var(--r-sm)}
+[data-theme="meshle"] .console__stamp{
+  background:rgba(251,246,239,.88);color:var(--ash);border-radius:0 var(--r-sm) 0 0;
+}
+
+/* graphics may use the ochre and the soft accent; text may not */
+[data-theme="meshle"] input[type=range]::-webkit-slider-runnable-track{
+  background:linear-gradient(90deg,var(--ochre) 0%,var(--accent-soft) 46%,var(--k65) 100%);
+  height:3px;border-radius:2px;
+}
+[data-theme="meshle"] input[type=range]::-moz-range-track{
+  background:linear-gradient(90deg,var(--ochre) 0%,var(--accent-soft) 46%,var(--k65) 100%);
+  height:3px;border-radius:2px;
+}
+[data-theme="meshle"] .card__ph img{filter:saturate(.98) contrast(1.01) brightness(.99)}
+[data-theme="meshle"] .card__ph::after{
+  background:linear-gradient(180deg,rgba(17,24,39,0) 62%,rgba(17,24,39,.16) 100%);
+}
+[data-theme="meshle"] .split__fig img{filter:contrast(1.01) saturate(.98)}
+[data-theme="meshle"] .rail{
+  background:linear-gradient(90deg,rgba(251,246,239,.94),rgba(251,246,239,0));
+}
+[data-theme="meshle"] .mast__photo img{opacity:.82}
+[data-theme="meshle"] .mast__veil{
+  background:
+    radial-gradient(125% 95% at 50% 44%, rgba(251,246,239,.34) 0%, rgba(251,246,239,.62) 55%, rgba(251,246,239,.92) 100%),
+    linear-gradient(180deg, rgba(251,246,239,.62) 0%, rgba(251,246,239,.46) 24%, rgba(251,246,239,.58) 60%, rgba(251,246,239,.90) 88%, var(--void) 100%);
+}
+
+/* ============================================================
+   LIGHT THEME — the daylit room.
+   Same structure, same spectrum, re-grounded on paper.
+   ============================================================ */
+[data-theme="light"]{
+  color-scheme:light;
+  --night:#33475F;
+  --void:#F4F1EB;          /* warm paper, not clinical white */
+  --void-rgb:244,241,235;
+  --shell:#EAE6DE;
+  --shell-2:#E2DDD3;
+  --line:#CFC9BC;
+  --line-soft:#DED9CE;
+  --bone:#14161A;          /* ink */
+  --bone-rgb:20,22,26;
+  --ash:#5A574F;           /* 7.0:1 on paper */
+  --ash-dim:#666259;       /* 5.4:1 on paper, 4.9:1 on the shell bands */
+
+  /* the spectrum, darkened until each value carries on paper */
+  --k27:#A25B11;
+  --k40:#7C6A44;
+  --k65:#2C608E;
+  --lb-rgb:244,241,235;
+  --stage-bg:#DED9CE;
+  --readout-dim:.62;
+}
+/* the slider track stays luminous — it depicts light, it is not text */
+[data-theme="light"] input[type=range]::-webkit-slider-runnable-track{
+  background:linear-gradient(90deg,#E8A24C 0%,#D8C79E 46%,#7FA8CE 100%);
+  height:3px;
+}
+[data-theme="light"] input[type=range]::-moz-range-track{
+  background:linear-gradient(90deg,#E8A24C 0%,#D8C79E 46%,#7FA8CE 100%);
+  height:3px;
+}
+/* photography needs no brightness knock-down against paper */
+[data-theme="light"] .card__ph img{filter:saturate(.96) contrast(1.02) brightness(.99)}
+[data-theme="light"] .card__ph::after{
+  background:linear-gradient(180deg,rgba(20,22,26,0) 62%,rgba(20,22,26,.18) 100%);
+}
+[data-theme="light"] .split__fig img{filter:contrast(1.01) saturate(.98)}
+[data-theme="light"] .console__stamp{
+  background:rgba(244,241,235,.86);color:var(--ash);
+}
+/* On paper the hero photograph becomes a ghosted plate, the way a printed
+   cover carries an image behind type. Guarantees ~8:1 for ink over any
+   part of the frame. */
+[data-theme="light"] .mast__veil{
+  background:
+    radial-gradient(125% 95% at 50% 44%, rgba(244,241,235,.34) 0%, rgba(244,241,235,.62) 55%, rgba(244,241,235,.92) 100%),
+    linear-gradient(180deg, rgba(244,241,235,.62) 0%, rgba(244,241,235,.46) 24%, rgba(244,241,235,.58) 60%, rgba(244,241,235,.90) 88%, var(--void) 100%);
+}
+[data-theme="light"] .mast__photo img{opacity:.82}
+[data-theme="light"] .scroll-cue i{background:linear-gradient(180deg,var(--k27),transparent)}
+[data-theme="light"] .rail{
+  background:linear-gradient(90deg,rgba(244,241,235,.94),rgba(244,241,235,0));
+}
+
+/* colour-scheme pinned above source order (:root and [data-theme] tie at 0,1,0) */
+html:not([data-theme]){color-scheme:dark}
+html[data-theme="light"],html[data-theme="meshle"]{color-scheme:light}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+/* The page ground is set on BOTH html and body. body-background propagates to
+   the canvas only while html has none; in an OS dark context the engine paints a
+   dark backdrop on the root, that propagation stops, and the dark shows through. */
+html{background:var(--void);min-height:100%}
+body{
+  margin:0;
+  background:var(--void);
+  color:var(--bone);
+  font-family:var(--read);
+  font-weight:300;
+  font-size:clamp(16px,1.05vw,17.5px);
+  line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+
+/* ---------- shared type roles ---------- */
+.u-mono{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--ash-dim);
+  font-weight:400;
+}
+.u-disp{
+  font-family:var(--disp);
+  font-variation-settings:"wdth" 112,"wght" 280;
+  letter-spacing:-.025em;
+  line-height:.98;
+  margin:0;
+}
+.u-lede{
+  font-size:clamp(19px,1.6vw,25px);
+  line-height:1.55;
+  color:var(--bone);
+  font-weight:200;
+  max-width:30ch;
+}
+
+/* ---------- skip link + focus ---------- */
+.skip{
+  position:absolute;left:-9999px;top:0;z-index:200;
+  background:var(--bone);color:var(--void);
+  padding:14px 20px;font-family:var(--mono);font-size:12px;
+}
+.skip:focus{left:12px;top:12px}
+:focus-visible{
+  outline:2px solid var(--k27);
+  outline-offset:3px;
+}
+
+/* ============================================================
+   KELVIN RAIL — graduated section navigation
+   ============================================================ */
+.rail{
+  position:fixed;left:0;top:0;bottom:0;width:var(--rail);
+  z-index:60;display:none;
+  padding:0 0 0 26px;
+  align-items:center;
+  border-right:1px solid var(--line-soft);
+  background:linear-gradient(90deg,rgba(var(--void-rgb),.94),rgba(var(--void-rgb),0));
+  backdrop-filter:blur(6px);
+}
+.rail__list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.rail__btn{
+  display:flex;align-items:center;gap:12px;
+  background:none;border:0;padding:9px 0;cursor:pointer;
+  color:var(--ash-dim);font-family:var(--mono);font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;
+  min-height:32px;
+}
+.rail__tick{
+  display:block;width:16px;height:1px;background:var(--line);
+  transition:width .45s var(--ease),background .45s var(--ease);
+  flex:none;
+}
+.rail__name{opacity:0;transform:translateX(-4px);transition:opacity .35s,transform .35s;white-space:nowrap}
+.rail__btn:hover .rail__name,.rail__btn:focus-visible .rail__name{opacity:1;transform:none}
+.rail__btn[aria-current="true"] .rail__tick{width:34px;background:var(--k27)}
+.rail__btn[aria-current="true"]{color:var(--bone)}
+.rail__btn[aria-current="true"] .rail__name{opacity:1;transform:none}
+@media(min-width:1180px){.rail{display:flex}
+  .shell{padding-left:var(--rail)}
+}
+
+/* ============================================================
+   SHELL / SECTIONS
+   ============================================================ */
+.wrap{
+  width:100%;max-width:var(--maxw);
+  margin-inline:auto;
+  padding-inline:var(--gut);
+}
+.band{padding-block:clamp(78px,11vw,150px);position:relative}
+.band--tight{padding-block:clamp(52px,7vw,92px)}
+.band--shell{background:var(--shell)}
+.hr{height:1px;background:var(--line-soft);border:0;margin:0}
+
+/* eyebrow row: label + kelvin key */
+.eyebrow{
+  display:flex;align-items:baseline;gap:18px;
+  padding-bottom:26px;margin-bottom:clamp(30px,4vw,54px);
+  border-bottom:1px solid var(--line-soft);
+  flex-wrap:wrap;
+}
+.eyebrow__k{margin-left:auto;color:var(--ash-dim)}
+
+/* ============================================================
+   MASTHEAD
+   ============================================================ */
+.mast{position:relative;min-height:100vh;min-height:100svh;overflow:hidden}
+.mast__inner{
+  position:relative;z-index:2;
+  width:100%;max-width:var(--maxw);margin-inline:auto;
+  padding-inline:var(--gut);
+  padding-block:clamp(26px,4vw,44px) clamp(30px,5vw,56px);
+  min-height:100vh;
+  min-height:100svh;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.mast__photo{
+  position:absolute;inset:0;z-index:0;
+}
+.mast__photo img{
+  width:100%;height:100%;object-fit:cover;
+  opacity:.72;
+}
+.mast__veil{
+  position:absolute;inset:0;z-index:1;
+  background:
+    radial-gradient(120% 92% at 50% 46%, rgba(var(--void-rgb),0) 0%, rgba(var(--void-rgb),.55) 58%, rgba(var(--void-rgb),.94) 100%),
+    linear-gradient(180deg, rgba(var(--void-rgb),.86) 0%, rgba(var(--void-rgb),.18) 26%, rgba(var(--void-rgb),.38) 62%, var(--void) 99%);
+}
+
+.mast__top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.logo{display:block;text-decoration:none;line-height:0}
+.logo__mark{
+  height:clamp(56px,7.4vw,100px);width:auto;display:block;
+}
+
+.mast__mid{padding-block:clamp(40px,9vw,90px);position:relative}
+/* Type over a photograph cannot rely on the page veil alone: the hero spans
+   black to specular white beneath the headline. This scrim is anchored to the
+   copy block and fades out to the right, so the image stays clear where there
+   is no text. Measured worst case across all three builds: headline 10.0:1,
+   emphasis 3.8:1 (large-text threshold is 3.0), sub-copy 5.2:1. */
+.mast__mid::before{
+  content:"";position:absolute;z-index:-1;
+  inset:-14% -10% -14% -60vw;
+  background:linear-gradient(90deg,
+    rgba(var(--void-rgb),.92) 0%,
+    rgba(var(--void-rgb),.86) 45%,
+    rgba(var(--void-rgb),.55) 72%,
+    rgba(var(--void-rgb),0) 100%);
+}
+.mast h1{
+  font-family:var(--disp);
+  font-variation-settings:"wdth" 118,"wght" 250;
+  font-size:clamp(38px,8.4vw,124px);
+  line-height:.92;letter-spacing:-.035em;
+  margin:0;max-width:16ch;
+}
+.mast h1 em{
+  font-family:var(--read);font-style:italic;font-weight:300;
+  letter-spacing:-.01em;
+  color:var(--k27);
+}
+.mast__sub{
+  margin:clamp(26px,3.4vw,42px) 0 0;
+  max-width:46ch;color:var(--ash);
+  font-size:clamp(16px,1.25vw,19px);
+}
+.mast__foot{
+  display:flex;gap:clamp(18px,4vw,64px);align-items:flex-end;
+  flex-wrap:wrap;justify-content:space-between;
+}
+.mast__meta{display:flex;gap:clamp(18px,3.4vw,48px);flex-wrap:wrap}
+.mast__meta div{max-width:19ch}
+.mast__meta b{
+  display:block;font-family:var(--disp);font-variation-settings:"wdth" 100,"wght" 400;
+  font-size:13px;letter-spacing:.02em;color:var(--bone);margin-bottom:4px;font-weight:400;
+}
+.mast__meta span{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ash-dim);text-transform:uppercase}
+
+.scroll-cue{display:flex;align-items:center;gap:10px;color:var(--ash-dim)}
+.scroll-cue i{
+  display:block;width:1px;height:34px;
+  background:linear-gradient(180deg,var(--k27),transparent);
+}
+
+/* ============================================================
+   SERVICE MARQUEE (four disciplines)
+   ============================================================ */
+.disc{border-top:1px solid var(--line-soft)}
+.disc__row{
+  display:grid;grid-template-columns:auto 1fr;gap:clamp(16px,4vw,54px);
+  padding-block:clamp(26px,3.4vw,44px);
+  border-bottom:1px solid var(--line-soft);
+  align-items:start;
+}
+.disc__row:last-child{border-bottom:0}
+.disc__n{font-family:var(--mono);font-size:11px;color:var(--ash-dim);padding-top:9px;letter-spacing:.14em}
+.disc__body{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:860px){.disc__body{
+  /* Track must clear the DISPLAY face, not the body face: 'Controls' at the
+     capped 48px needs ~225px. ch units here resolve against the 17px serif. */
+  grid-template-columns:clamp(170px,21vw,300px) minmax(0,1fr);
+  gap:clamp(20px,3vw,48px);align-items:baseline;
+}}
+.disc__ttl{
+  font-family:var(--disp);font-variation-settings:"wdth" 118,"wght" 300;
+  font-size:clamp(26px,3.6vw,48px);letter-spacing:-.02em;margin:0;line-height:1;
+  min-width:0;overflow-wrap:break-word;
+}
+.disc__txt{margin:0;color:var(--ash);max-width:62ch}
+
+/* ============================================================
+   EDITORIAL SPLITS
+   ============================================================ */
+.split{
+  display:grid;gap:clamp(28px,4.5vw,72px);
+  grid-template-columns:1fr;align-items:center;
+}
+@media(min-width:900px){
+  .split{grid-template-columns:minmax(0,.86fr) minmax(0,1fr)}
+  .split--flip .split__fig{order:2}
+}
+.split__fig{margin:0;position:relative}
+.split__fig img{width:100%;height:auto;filter:contrast(1.03) saturate(.94)}
+.split__cap{
+  margin-top:12px;display:flex;gap:10px;align-items:baseline;
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ash-dim);
+}
+.split__cap i{width:14px;height:1px;background:var(--k27);display:block;flex:none;transform:translateY(-4px)}
+.prose p{color:var(--ash);max-width:56ch}
+.prose p:first-of-type{color:var(--bone)}
+.prose h2{margin:0 0 26px}
+
+/* sector chips */
+.sectors{list-style:none;margin:30px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.sectors li{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ash);border:1px solid var(--line);padding:8px 13px;
+}
+
+/* ============================================================
+   SIGNATURE — the Kelvin console
+   ============================================================ */
+.console{
+  display:grid;gap:clamp(26px,3.6vw,56px);
+  grid-template-columns:1fr;
+}
+@media(min-width:960px){
+  .console{grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);align-items:stretch}
+  .console__stage{aspect-ratio:auto;min-height:340px}
+}
+
+.console__stage{position:relative;overflow:hidden;background:var(--stage-bg);aspect-ratio:3/2}
+.console__stage img{width:100%;height:100%;object-fit:cover;display:block;transition:filter .5s var(--ease)}
+.console__tint{
+  position:absolute;inset:0;mix-blend-mode:soft-light;pointer-events:none;
+  transition:background .5s var(--ease),opacity .5s var(--ease);
+}
+.console__tint2{
+  position:absolute;inset:0;mix-blend-mode:overlay;opacity:.28;pointer-events:none;
+  transition:background .5s var(--ease);
+}
+.console__stamp{
+  position:absolute;left:0;bottom:0;z-index:3;
+  background:rgba(var(--void-rgb),.78);backdrop-filter:blur(8px);
+  padding:12px 18px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ash);
+}
+
+.console__panel{
+  border:1px solid var(--line);padding:clamp(22px,2.6vw,34px);
+  display:flex;flex-direction:column;gap:22px;background:var(--void);
+}
+.readout{display:flex;align-items:baseline;gap:12px}
+.readout__k{
+  font-family:var(--disp);font-variation-settings:"wdth" 118,"wght" 300;
+  font-size:clamp(46px,6.4vw,76px);line-height:.86;letter-spacing:-.04em;
+  transition:color .5s var(--ease);
+}
+.readout__u{font-family:var(--mono);font-size:13px;color:var(--ash-dim);letter-spacing:.1em}
+
+.slider-label{display:block;margin-bottom:2px}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:34px;
+  background:transparent;cursor:pointer;margin:0;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:2px;border-radius:0;
+  background:linear-gradient(90deg,var(--k27) 0%,var(--k40) 46%,var(--k65) 100%);
+}
+input[type=range]::-moz-range-track{
+  height:2px;background:linear-gradient(90deg,var(--k27) 0%,var(--k40) 46%,var(--k65) 100%);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--bone);border:0;margin-top:-7px;
+  box-shadow:0 0 0 6px rgba(var(--bone-rgb),.09);
+}
+input[type=range]::-moz-range-thumb{
+  width:16px;height:16px;border-radius:50%;background:var(--bone);border:0;
+  box-shadow:0 0 0 6px rgba(var(--bone-rgb),.09);
+}
+.scale-marks{
+  display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--ash-dim);
+  margin-top:-4px;
+}
+.console__desc{margin:0;color:var(--ash);font-size:16px;min-height:5.4em}
+.console__desc b{
+  display:block;font-family:var(--disp);font-variation-settings:"wdth" 108,"wght" 400;
+  font-weight:400;color:var(--bone);font-size:15px;letter-spacing:.01em;margin-bottom:6px;
+}
+
+/* metric trio */
+.metrics{
+  display:grid;grid-template-columns:1fr;gap:1px;background:var(--line-soft);
+  border:1px solid var(--line-soft);margin-top:clamp(30px,4vw,56px);
+}
+@media(min-width:760px){.metrics{grid-template-columns:repeat(3,1fr)}}
+.metric{background:var(--void);padding:clamp(22px,2.6vw,32px)}
+.metric__k{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--k27);text-transform:uppercase}
+.metric__t{
+  font-family:var(--disp);font-variation-settings:"wdth" 112,"wght" 300;
+  font-size:clamp(22px,2.4vw,30px);margin:12px 0 10px;letter-spacing:-.02em;line-height:1.05;
+}
+.metric p{margin:0;color:var(--ash);font-size:15.5px}
+
+/* lighting types */
+.types{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line-soft);border:1px solid var(--line-soft)}
+@media(min-width:680px){.types{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1060px){.types{grid-template-columns:repeat(4,1fr)}}
+.type{background:var(--void);padding:clamp(22px,2.4vw,30px);display:flex;flex-direction:column;gap:12px}
+.type__ico{height:44px;display:block}
+.s-bone{stroke:var(--bone)}
+.s-k27{stroke:var(--k27)}
+.s-ash{stroke:var(--ash)}
+svg [fill="none"],.type__ico,.logo svg{fill:none}
+.type__t{font-family:var(--disp);font-variation-settings:"wdth" 108,"wght" 400;font-weight:400;font-size:16px;letter-spacing:.01em;margin:0}
+.type p{margin:0;color:var(--ash);font-size:15px}
+
+
+/* ============================================================
+   CIRCADIAN
+   ============================================================ */
+.circ{display:grid;gap:clamp(28px,4vw,64px);grid-template-columns:1fr;align-items:center}
+@media(min-width:900px){.circ{grid-template-columns:minmax(0,.85fr) minmax(0,1fr)}}
+.circ__dial{margin:0;max-width:380px;width:100%;justify-self:center}
+.circ__dial svg{width:100%;height:auto;display:block}
+.circ__seg{fill:none;stroke-width:9;stroke-linecap:butt}
+.circ__tick{font-family:var(--mono);font-size:11px;letter-spacing:.1em;fill:var(--ash-dim)}
+.circ__core{font-family:var(--mono);font-size:10px;letter-spacing:.16em;fill:var(--ash-dim)}
+
+.phases{list-style:none;margin:clamp(24px,3vw,38px) 0 0;padding:0;border-top:1px solid var(--line-soft)}
+.phases li{
+  display:grid;gap:4px 16px;padding:15px 0;border-bottom:1px solid var(--line-soft);
+  grid-template-columns:auto 1fr;align-items:baseline;
+}
+@media(min-width:620px){.phases li{
+  grid-template-columns:clamp(56px,5vw,72px) clamp(104px,10vw,132px) minmax(0,1fr);
+}}
+.phases__h{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ash-dim)}
+.phases__n{
+  font-family:var(--disp);font-size:clamp(15px,1.5vw,18px);letter-spacing:-.01em;
+  display:flex;align-items:center;gap:9px;
+}
+.phases__n i{width:9px;height:9px;border-radius:50%;flex:none;display:block}
+.phases__d{color:var(--ash);font-size:15.5px;grid-column:1/-1}
+@media(min-width:620px){.phases__d{grid-column:3}}
+
+
+/* ============================================================
+   PROJECT INDEX
+   ============================================================ */
+.proj__note{
+  margin:0 0 clamp(26px,3.2vw,44px);color:var(--ash);
+}
+.proj__note .u-lede{margin:0 0 12px}
+.proj__note span{
+  display:block;
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ash-dim);
+}
+.proj__note b{
+  /* matched to the "Born in India" heading — same class, same size ramp */
+  display:block;color:var(--bone);
+  font-size:clamp(28px,4vw,54px);
+  margin-bottom:14px;
+}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:clamp(24px,3vw,40px)}
+.filter{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  background:transparent;color:var(--ash-dim);border:1px solid var(--line);
+  padding:0 15px;min-height:38px;cursor:pointer;
+  transition:color .3s,border-color .3s,background .3s;
+}
+.filter:hover{color:var(--bone);border-color:var(--ash-dim)}
+.filter[aria-pressed="true"]{color:var(--void);background:var(--bone);border-color:var(--bone)}
+
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,268px),1fr));
+  gap:clamp(14px,1.7vw,26px);
+  list-style:none;margin:0;padding:0;
+}
+.card{margin:0}
+.card__btn{
+  display:block;width:100%;text-align:left;background:none;border:0;padding:0;cursor:pointer;
+  color:inherit;font:inherit;
+}
+.card__ph{display:block;position:relative;overflow:hidden;background:var(--shell);aspect-ratio:4/3}
+.card__ph img{
+  width:100%;height:100%;object-fit:cover;
+  filter:saturate(.9) contrast(1.04) brightness(.88);
+  transition:transform .8s var(--ease),filter .6s var(--ease);
+}
+.card__btn:hover .card__ph img,.card__btn:focus-visible .card__ph img{
+  transform:scale(1.035);filter:saturate(1) contrast(1.02) brightness(1);
+}
+.card__ph::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(var(--void-rgb),0) 46%,rgba(var(--void-rgb),.55) 100%);
+  pointer-events:none;
+}
+.card__count{
+  position:absolute;right:10px;bottom:10px;z-index:2;
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+  color:var(--bone);background:rgba(var(--void-rgb),.72);
+  backdrop-filter:blur(6px);
+  min-width:22px;height:22px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;padding:0 7px;
+}
+.card__meta{display:flex;gap:10px;align-items:baseline;padding-top:11px}
+.card__n{font-family:var(--mono);font-size:10px;color:var(--ash-dim);letter-spacing:.12em;flex:none}
+.card__t{
+  display:block;
+  font-family:var(--disp);font-variation-settings:"wdth" 100,"wght" 400;font-weight:400;
+  font-size:13.5px;letter-spacing:.015em;line-height:1.35;margin:0;
+}
+.card__s{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ash-dim);margin-top:5px}
+.card[hidden]{display:none}
+.count{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--ash-dim);text-transform:uppercase;margin-top:26px}
+
+/* ============================================================
+   MATERIALS
+   ============================================================ */
+.mat{display:grid;gap:clamp(26px,3.6vw,56px);grid-template-columns:1fr}
+@media(min-width:900px){.mat{grid-template-columns:minmax(0,1fr) minmax(0,.9fr);align-items:end}}
+.mat__list{list-style:none;margin:26px 0 0;padding:0;border-top:1px solid var(--line-soft)}
+.mat__list li{
+  display:flex;gap:16px;align-items:baseline;
+  padding:13px 0;border-bottom:1px solid var(--line-soft);
+}
+.mat__list b{
+  font-family:var(--disp);font-variation-settings:"wdth" 112,"wght" 300;font-weight:300;
+  font-size:clamp(17px,1.7vw,21px);letter-spacing:-.01em;
+  flex:none;width:clamp(122px,14vw,172px);
+}
+.mat__list span{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ash-dim)}
+
+/* ============================================================
+   QUOTE
+   ============================================================ */
+.quote{position:relative;text-align:left}
+.quote blockquote{
+  /* matched to "1200+ completed projects." — same class, same size ramp */
+  margin:0;font-family:var(--disp);
+  font-variation-settings:"wdth" 112,"wght" 280;font-style:normal;
+  font-size:clamp(28px,4vw,54px);line-height:.98;letter-spacing:-.025em;
+  max-width:30ch;
+}
+.quote{color:var(--bone)}
+.quote blockquote::before{content:"“";color:var(--k27)}
+.quote blockquote::after{content:"”";color:var(--k27)}
+.quote figcaption{margin-top:26px}
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+.cta{border-top:1px solid var(--line-soft)}
+.cta__grid{display:grid;gap:clamp(30px,4vw,64px);grid-template-columns:1fr}
+@media(min-width:900px){.cta__grid{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}}
+.cta h2{
+  font-family:var(--disp);font-variation-settings:"wdth" 118,"wght" 250;
+  font-size:clamp(32px,5.6vw,74px);line-height:.96;letter-spacing:-.035em;margin:0;max-width:14ch;
+}
+.cta__note{color:var(--ash);max-width:48ch;margin:22px 0 0}
+.contacts{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-soft)}
+.contacts li{border-bottom:1px solid var(--line-soft)}
+.contacts a{
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+  padding:18px 0;text-decoration:none;min-height:44px;
+  transition:color .3s var(--ease),padding-left .4s var(--ease);
+}
+.contacts a:hover{color:var(--k27);padding-left:8px}
+.contacts .u-mono{flex:none;min-width:8ch}
+.contacts b{
+  font-family:var(--disp);font-variation-settings:"wdth" 104,"wght" 350;font-weight:400;
+  font-size:clamp(15px,1.5vw,19px);letter-spacing:.005em;word-break:break-word;
+}
+
+.colophon{
+  display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  padding-block:26px;border-top:1px solid var(--line-soft);
+}
+
+/* ============================================================
+   LIGHTBOX
+   ============================================================ */
+.lb[hidden]{display:none}
+.lb{
+  position:fixed;inset:0;z-index:120;
+  background:rgba(var(--lb-rgb),.965);backdrop-filter:blur(10px);
+  display:flex;flex-direction:column;
+  padding:clamp(14px,2.4vw,30px);
+}
+.lb__bar{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.lb__x,.lb__nav button{
+  background:none;border:1px solid var(--line);color:var(--ash);
+  min-width:44px;min-height:44px;cursor:pointer;
+  font-family:var(--mono);font-size:12px;
+  transition:color .25s,border-color .25s;
+}
+.lb__x:hover,.lb__nav button:hover{color:var(--bone);border-color:var(--ash-dim)}
+.lb__nav{display:flex;gap:8px}
+.lb__stage{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  min-height:0;padding-block:clamp(12px,2vw,22px);
+}
+.lb__stage img{max-width:100%;max-height:100%;object-fit:contain;width:auto;height:auto}
+.lb__cap{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;justify-content:center;text-align:center}
+.lb__cap b{
+  font-family:var(--disp);font-variation-settings:"wdth" 108,"wght" 350;font-weight:400;
+  font-size:clamp(14px,1.5vw,18px);letter-spacing:.01em;
+}
+
+/* ============================================================
+   MOTION — light arrives out of darkness
+   ============================================================ */
+.js .rise{opacity:0;transform:translateY(22px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.rise.lit{opacity:1;transform:none}
+.rise:nth-child(2){transition-delay:.07s}
+.rise:nth-child(3){transition-delay:.14s}
+
+.mast__top,.mast h1,.mast__sub,.mast__foot{animation:dawn 1.25s var(--ease) both}
+.mast h1{animation-delay:.14s}
+.mast__sub{animation-delay:.3s}
+.mast__foot{animation-delay:.44s}
+@keyframes dawn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-delay:0s!important;transition-duration:.001ms!important}
+  .rise{opacity:1;transform:none}
+}
+
+@media print{
+  .rail,.lb,.filters,.scroll-cue{display:none!important}
+  body{background:#fff;color:#000}
+}
+
+/* ============================================================
+   DAY / DARK TOGGLE — additive only, no existing rule is modified.
+   ============================================================ */
+.logo__mark[data-mode="meshle"]{display:none}
+[data-theme="meshle"] .logo__mark[data-mode="dark"]{display:none}
+[data-theme="meshle"] .logo__mark[data-mode="meshle"]{display:block}
+
+.mode-toggle{
+  display:inline-flex;align-items:center;gap:8px;
+  background:none;border:1px solid var(--line);color:var(--ash);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  padding:0 13px;min-height:36px;cursor:pointer;
+  transition:color .3s,border-color .3s;
+}
+.mode-toggle:hover{color:var(--bone);border-color:var(--ash-dim)}
+.mode-toggle__track{
+  position:relative;width:30px;height:16px;border-radius:8px;
+  background:var(--line);flex:none;transition:background .3s;
+}
+.mode-toggle__knob{
+  position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;
+  background:var(--bone);transition:transform .3s var(--ease),background .3s;
+}
+[data-theme="meshle"] .mode-toggle__track{background:var(--k27)}
+[data-theme="meshle"] .mode-toggle__knob{transform:translateX(14px);background:var(--void)}
+
+.rail__toggle{
+  margin-top:auto;padding-top:18px;border-top:1px solid var(--line-soft);
+  display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+}
+.rail .mode-toggle{border-color:transparent;padding:0;min-height:auto;color:var(--ash-dim)}
+.rail .mode-toggle:hover{color:var(--bone)}
+
+@media(min-width:1180px){.rail{padding-bottom:26px}}
+</style>
+</head>
+<body>
+<script>document.documentElement.className+=" js";</script>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ══════════ KELVIN RAIL ══════════ -->
+<nav class="rail" aria-label="Section navigation">
+  <ul class="rail__list" id="railList">
+    <li><button class="rail__btn" data-to="top"><span class="rail__tick"></span><span class="rail__name">Cover</span></button></li>
+    <li><button class="rail__btn" data-to="practice"><span class="rail__tick"></span><span class="rail__name">Practice</span></button></li>
+    <li><button class="rail__btn" data-to="disciplines"><span class="rail__tick"></span><span class="rail__name">Disciplines</span></button></li>
+    <li><button class="rail__btn" data-to="light"><span class="rail__tick"></span><span class="rail__name">Light</span></button></li>
+    <li><button class="rail__btn" data-to="circadian"><span class="rail__tick"></span><span class="rail__name">Circadian</span></button></li>
+    <li><button class="rail__btn" data-to="types"><span class="rail__tick"></span><span class="rail__name">Types</span></button></li>
+    <li><button class="rail__btn" data-to="projects"><span class="rail__tick"></span><span class="rail__name">Projects</span></button></li>
+    <li><button class="rail__btn" data-to="earth"><span class="rail__tick"></span><span class="rail__name">Earth</span></button></li>
+    <li><button class="rail__btn" data-to="contact"><span class="rail__tick"></span><span class="rail__name">Contact</span></button></li>
+  </ul>
+  <div class="rail__toggle">
+    <button type="button" class="mode-toggle" id="modeToggleRail" aria-pressed="false"
+            aria-label="Switch to day mode">
+      <span class="mode-toggle__track" aria-hidden="true"><span class="mode-toggle__knob"></span></span>
+      <span id="modeToggleRailLabel">Dark</span>
+    </button>
+  </div>
+</nav>
+
+<div class="shell">
+
+<!-- ══════════ MASTHEAD ══════════ -->
+<header class="mast" id="top">
+  <div class="mast__photo">
+    <img src="img/64c703f40659.webp" alt="Looking up into a circular coffered ceiling ringed with concentric bands of linear light." width="1700" height="1134" fetchpriority="high">
+  </div>
+  <div class="mast__veil" aria-hidden="true"></div>
+
+  <div class="mast__inner">
+  <div class="mast__top">
+    <a class="logo" href="#top" aria-label="Interstellar Lighting &amp; Controls — back to top">
+      <img class="logo__mark" data-mode="dark" src="img/76298b0d01e5.png" width="760" height="481"
+           alt="Interstellar Lighting &amp; Controls">
+      <img class="logo__mark" data-mode="meshle" src="img/da6eb3d8b2df.png" width="760" height="481"
+           alt="Interstellar Lighting &amp; Controls">
+    </a>
+    <p class="u-mono" style="margin:6px 0 0;max-width:20ch;text-align:right">Kochi, Kerala<br>Design Profile 2026</p>
+    <button type="button" class="mode-toggle" id="modeToggle" aria-pressed="false"
+            aria-label="Switch to day mode" style="margin-left:20px">
+      <span class="mode-toggle__track" aria-hidden="true"><span class="mode-toggle__knob"></span></span>
+      <span id="modeToggleLabel">Dark</span>
+    </button>
+  </div>
+
+  <div class="mast__mid">
+    <h1>Light is not a fixture. It is a <em>living substance</em>.</h1>
+    <p class="mast__sub">Interstellar is a lighting practice working across architecture, hospitality, retail and culture — shaping spaces where the light is designed as carefully as the room it lands in.</p>
+  </div>
+
+  <div class="mast__foot">
+    <div class="mast__meta">
+      <div><b>Born in India</b><span>Kochi · Kerala</span></div>
+      <div><b>1200+ projects</b><span>31 shown here</span></div>
+      <div><b>End to end</b><span>Design · Controls · Support · Supply</span></div>
+    </div>
+    <div class="scroll-cue"><i aria-hidden="true"></i><span class="u-mono">Scroll</span></div>
+  </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ══════════ PRACTICE ══════════ -->
+<section class="band wrap" id="practice" aria-labelledby="practice-h">
+  <div class="eyebrow rise">
+    <span class="u-mono">01 — The practice</span>
+    <span class="u-mono eyebrow__k">Ambient 2700K</span>
+  </div>
+
+  <div class="split rise">
+    <figure class="split__fig">
+      <img src="img/664fd012f0cf.webp" alt="A board-formed concrete corridor lit by a single wall-grazing linear fitting." width="603" height="804" loading="lazy" decoding="async">
+      <figcaption class="split__cap"><i aria-hidden="true"></i><span>Grazed concrete · Detail study</span></figcaption>
+    </figure>
+    <div class="prose">
+      <h2 class="u-disp" id="practice-h" style="font-size:clamp(28px,4vw,54px)">Born in India,<br>shaping the future of light.</h2>
+      <p class="u-lede" style="margin-bottom:24px">We craft lighting from solid, enduring materials — blending technology and aesthetics into work that stays simple, elegant and quiet.</p>
+      <p>Every project is different, so every solution is made to measure. We begin with the architectural drawings and a detailed brief, then work alongside the other consultants on the job so the lighting concept grows inside the design rather than arriving on top of it.</p>
+      <p>That collaboration is the point. We hold the technical demands of the engineer and the creative ambition of the architect in the same set of drawings — and we stay on the project through controls, procurement and commissioning.</p>
+      <ul class="sectors">
+        <li>Residential</li><li>Offices</li><li>Facades</li><li>Hospitality</li>
+        <li>Art &amp; Culture</li><li>Healthcare</li><li>Industrial</li><li>Education</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ DISCIPLINES ══════════ -->
+<section class="band band--shell" id="disciplines" aria-labelledby="disc-h">
+  <div class="wrap">
+    <div class="eyebrow rise">
+      <span class="u-mono" id="disc-h">02 — Four disciplines, one team</span>
+      <span class="u-mono eyebrow__k">Neutral 4000K</span>
+    </div>
+    <div class="disc rise">
+      <div class="disc__row">
+        <span class="disc__n">01</span>
+        <div class="disc__body">
+          <h3 class="disc__ttl">Design</h3>
+          <p class="disc__txt">Lighting is the hardest element to design because it is intangible — you have to experience it to understand it. We study the plans, the furniture layout, the finishes and fabrics, and how people will actually move through the space, then propose a scheme that is accurate rather than aspirational.</p>
+        </div>
+      </div>
+      <div class="disc__row">
+        <span class="disc__n">02</span>
+        <div class="disc__body">
+          <h3 class="disc__ttl">Controls</h3>
+          <p class="disc__txt">The art of lighting is not only in illuminating, but in controlling. Daylight harvesting, occupancy sensing and timed dimming let one room hold several moods — personal settings for different tasks, lower running costs, and a building that adapts instead of switching.</p>
+        </div>
+      </div>
+      <div class="disc__row">
+        <span class="disc__n">03</span>
+        <div class="disc__body">
+          <h3 class="disc__ttl">Support</h3>
+          <p class="disc__txt">Early-stage consulting and sampling, individual project analysis, cost calculation and optimisation, project management assistance, extended warranties and after-sales service. One team accountable from concept to completion.</p>
+        </div>
+      </div>
+      <div class="disc__row">
+        <span class="disc__n">04</span>
+        <div class="disc__body">
+          <h3 class="disc__ttl">Supply</h3>
+          <p class="disc__txt">Technical luminaires, lighting management systems and emergency lighting, brought together and tailored to the character of the architecture — track, linear, recessed and surface downlights, system lights and the accessories that tune them on site.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ THE KELVIN CONSOLE (signature) ══════════ -->
+<section class="band" id="light" aria-labelledby="light-h">
+  <div class="wrap">
+    <div class="eyebrow rise">
+      <span class="u-mono" id="light-h">03 — Understanding light</span>
+      <span class="u-mono eyebrow__k">2000K → 6500K</span>
+    </div>
+
+    <h2 class="u-disp rise" style="font-size:clamp(26px,3.6vw,46px);max-width:20ch;margin-bottom:14px">The same room, at six different temperatures.</h2>
+    <p class="rise" style="color:var(--ash);max-width:56ch;margin:0 0 clamp(28px,3.6vw,46px)">Colour temperature describes the warmth or coolness of a light, measured in kelvin. Move the control and watch a real project change character — nothing else in the room has moved.</p>
+
+    <div class="console rise">
+      <div class="console__stage">
+        <img id="stage" src="img/a8f02551cd02.jpg" alt="A restaurant interior used to demonstrate how colour temperature changes the mood of a space." width="1000" height="667" loading="lazy" decoding="async">
+        <div class="console__tint" id="tint" aria-hidden="true"></div>
+        <div class="console__tint2" id="tint2" aria-hidden="true"></div>
+        <div class="console__stamp">Mayabay · Thrissur — simulated</div>
+      </div>
+
+      <div class="console__panel">
+        <div>
+          <span class="u-mono slider-label" id="kLabel">Colour temperature</span>
+          <div class="readout">
+            <span class="readout__k" id="kValue">3000</span>
+            <span class="readout__u">K</span>
+          </div>
+        </div>
+
+        <div>
+          <input type="range" id="kRange" min="2000" max="6500" step="100" value="3000"
+                 aria-labelledby="kLabel" aria-describedby="kDesc"
+                 aria-valuetext="3000 kelvin, warm white">
+          <div class="scale-marks" aria-hidden="true"><span>2000K</span><span>4000K</span><span>6500K</span></div>
+        </div>
+
+        <p class="console__desc" id="kDesc" aria-live="polite">
+          <b>Warm white</b>
+          Relaxed and residential. The default for dining rooms, bedrooms and hospitality, where skin tones and timber need to stay flattering.
+        </p>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric">
+        <span class="metric__k">CRI · Ra 0–100</span>
+        <h3 class="metric__t">Colour Rendering Index</h3>
+        <p>How accurately a source reveals the true colour of what it lights. Critical wherever material, art, food or skin is on show — and the first spec we refuse to compromise.</p>
+      </div>
+      <div class="metric">
+        <span class="metric__k">UGR · ≤ 19 / ≤ 16</span>
+        <h3 class="metric__t">Unified Glare Rating</h3>
+        <p>An international measure of discomfort glare, comparing each fitting's luminance against the background the eye actually sees. Offices and classrooms target 19 or below; visually critical rooms, 16.</p>
+      </div>
+      <div class="metric">
+        <span class="metric__k">Lumens · lm</span>
+        <h3 class="metric__t">Total light output</h3>
+        <p>The quantity of visible light a source emits. Higher output looks brighter — but placement, beam and surface finish decide whether that brightness becomes comfort or glare.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TRU COLOUR ══════════ -->
+<section class="band band--shell" aria-labelledby="tru-h">
+  <div class="wrap">
+    <div class="split split--flip rise">
+      <figure class="split__fig">
+        <img src="img/a44f5869c9a0.webp" alt="An eye lit by a full band of spectral colour, illustrating colour rendering." width="1000" height="1589" loading="lazy" decoding="async">
+        <figcaption class="split__cap"><i aria-hidden="true"></i><span>Spectral rendering study</span></figcaption>
+      </figure>
+      <div class="prose">
+        <h2 class="u-disp" id="tru-h" style="font-size:clamp(26px,3.6vw,46px)">TRU Colour</h2>
+        <p class="u-lede" style="margin-bottom:22px">Over a billion wavelengths, tuned to the red and green bands that most LEDs give up on.</p>
+        <p>Those are the wavelengths that are difficult to attain and the ones the eye is least willing to forgive. Getting them right is what makes food look like food and skin look like skin — and it is the difference between a room that is bright and a room that feels well.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CIRCADIAN ══════════ -->
+<section class="band" id="circadian" aria-labelledby="circ-h">
+  <div class="wrap">
+    <div class="eyebrow rise">
+      <span class="u-mono" id="circ-h">04 — Circadian lighting</span>
+      <span class="u-mono eyebrow__k">24 hours</span>
+    </div>
+
+    <div class="circ rise">
+      <figure class="circ__dial">
+        <svg viewBox="0 0 340 340" role="img" aria-labelledby="dialTitle dialDesc">
+          <title id="dialTitle">A 24-hour circadian dial</title>
+          <desc id="dialDesc">Cool, high-intensity light through the morning; cool and
+            medium through the afternoon; warm and low in the evening; no light at night.</desc>
+          <circle cx="170" cy="170" r="118" fill="none" stroke="var(--line-soft)" stroke-width="1"/>
+          <path class="circ__seg" d="M170.0 52.0 A118 118 0 0 1 287.4 157.7" stroke="var(--line)"/>
+          <path class="circ__seg" d="M287.4 182.3 A118 118 0 0 1 182.3 287.4" stroke="var(--k65)"/>
+          <path class="circ__seg" d="M157.7 287.4 A118 118 0 0 1 52.6 182.3" stroke="var(--k40)"/>
+          <path class="circ__seg" d="M52.6 157.7 A118 118 0 0 1 157.7 52.6" stroke="var(--k27)"/>
+          <circle cx="170" cy="52" r="3.5" fill="var(--ash-dim)"/>
+          <circle cx="288" cy="170" r="3.5" fill="var(--k65)"/>
+          <circle cx="170" cy="288" r="3.5" fill="var(--k40)"/>
+          <circle cx="52"  cy="170" r="3.5" fill="var(--k27)"/>
+          <text class="circ__tick" x="170" y="28"  text-anchor="middle">00:00</text>
+          <text class="circ__tick" x="334" y="174" text-anchor="end">06:00</text>
+          <text class="circ__tick" x="170" y="322" text-anchor="middle">12:00</text>
+          <text class="circ__tick" x="6"   y="174" text-anchor="start">18:00</text>
+          <text class="circ__core" x="170" y="166" text-anchor="middle">SLEEP — WAKE</text>
+          <text class="circ__core" x="170" y="184" text-anchor="middle">CYCLE</text>
+        </svg>
+      </figure>
+
+      <div class="prose">
+        <h2 class="u-disp" style="font-size:clamp(26px,3.6vw,46px);max-width:18ch;margin-bottom:18px">A building can keep time with you.</h2>
+        <p class="u-lede" style="margin-bottom:20px">All living things — including plants — use circadian rhythms to regulate their internal cycles.</p>
+        <p>Light, natural or artificial, is the single biggest influence on that rhythm. For a flower it decides when the petals open in the sun and close again at night. For a person it is the sleep-wake cycle that keeps you alert and focused through the day and lets you rest after dark.</p>
+        <p>Which means a lighting scheme is never neutral. Get it wrong and a building works against the people inside it; tune it, and the light shifts through the day the way daylight would.</p>
+
+        <ul class="phases">
+          <li>
+            <span class="phases__h">06:00</span>
+            <span class="phases__n"><i style="background:var(--k65)" aria-hidden="true"></i>Morning</span>
+            <span class="phases__d">Cool light, high intensity — supporting the cortisol rise that wakes you.</span>
+          </li>
+          <li>
+            <span class="phases__h">12:00</span>
+            <span class="phases__n"><i style="background:var(--k40)" aria-hidden="true"></i>Afternoon</span>
+            <span class="phases__d">Cool light, medium intensity — the window for focus and coordination.</span>
+          </li>
+          <li>
+            <span class="phases__h">18:00</span>
+            <span class="phases__n"><i style="background:var(--k27)" aria-hidden="true"></i>Evening</span>
+            <span class="phases__d">Warm light, low intensity — winding down as digestion slows.</span>
+          </li>
+          <li>
+            <span class="phases__h">00:00</span>
+            <span class="phases__n"><i style="background:var(--ash-dim)" aria-hidden="true"></i>Midnight</span>
+            <span class="phases__d">No light — body temperature at its lowest.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ LIGHTING TYPES ══════════ -->
+<section class="band" id="types" aria-labelledby="types-h">
+  <div class="wrap">
+    <div class="eyebrow rise">
+      <span class="u-mono" id="types-h">05 — Lighting types</span>
+      <span class="u-mono eyebrow__k">Applied 3000K</span>
+    </div>
+    <div class="types rise">
+      <div class="type">
+        <svg class="type__ico" viewBox="0 0 60 44" fill="none" aria-hidden="true">
+          <path d="M30 4v9" class="s-k27" stroke-width="1.2"/>
+          <path d="M22 13h16l6 9H16l6-9z" class="s-bone" stroke-width="1"/>
+          <path d="M20 24l-4 14M40 24l4 14M30 24v14" class="s-k27" stroke-width=".7" opacity=".55"/>
+          <path d="M12 40h36" class="s-ash" stroke-width="1"/>
+        </svg>
+        <h3 class="type__t">Task</h3>
+        <p>Precise, functional illumination shaped around a specific activity — comfort and efficiency held without losing the aesthetic of the room.</p>
+      </div>
+      <div class="type">
+        <svg class="type__ico" viewBox="0 0 60 44" fill="none" aria-hidden="true">
+          <circle cx="14" cy="9" r="4" class="s-bone" stroke-width="1"/>
+          <path d="M17 12l20 24" class="s-k27" stroke-width=".7" opacity=".6"/>
+          <path d="M17 12l26 16" class="s-k27" stroke-width=".7" opacity=".6"/>
+          <rect x="34" y="20" width="16" height="18" class="s-ash" stroke-width="1"/>
+        </svg>
+        <h3 class="type__t">Accent</h3>
+        <p>Used to lift a single element — artwork, a material, a structural move — adding depth and creating the focal points a space is read by.</p>
+      </div>
+      <div class="type">
+        <svg class="type__ico" viewBox="0 0 60 44" fill="none" aria-hidden="true">
+          <path d="M8 6h44" class="s-k27" stroke-width="1.4"/>
+          <path d="M10 9v30M18 9v30M26 9v30M34 9v30M42 9v30M50 9v30" class="s-bone" stroke-width=".55" opacity=".45"/>
+          <path d="M8 39h44" class="s-ash" stroke-width="1"/>
+        </svg>
+        <h3 class="type__t">Wall grazers</h3>
+        <p>Slim linear fittings casting light tight along a surface, so texture and detail come forward as shadow and depth rather than flat brightness.</p>
+      </div>
+      <div class="type">
+        <svg class="type__ico" viewBox="0 0 60 44" fill="none" aria-hidden="true">
+          <path d="M8 8h44" class="s-k27" stroke-width="1.4"/>
+          <path d="M14 11c-3 9-4 19-4 28M30 11c0 9 0 19 0 28M46 11c3 9 4 19 4 28" class="s-bone" stroke-width=".55" opacity=".4"/>
+          <ellipse cx="30" cy="26" rx="21" ry="13" class="s-bone" stroke-width=".5" opacity=".28"/>
+          <path d="M8 39h44" class="s-ash" stroke-width="1"/>
+        </svg>
+        <h3 class="type__t">Wall washers</h3>
+        <p>An even, uniform wash across a vertical plane — the quietest way to make a room feel larger and to hold artwork in consistent light.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PROJECTS ══════════ -->
+<section class="band band--shell" id="projects" aria-labelledby="proj-h">
+  <div class="wrap">
+    <div class="eyebrow rise">
+      <span class="u-mono" id="proj-h">06 — Selected projects</span>
+      <span class="u-mono eyebrow__k">31 projects · 96 images</span>
+    </div>
+
+    <div class="proj__note rise">
+      <b class="u-disp">1200+ completed projects.</b>
+      <p class="u-lede">with more than a Decade of Expertise</p>
+      <span>Selected 31 Projects</span>
+    </div>
+
+    <div class="filters rise" role="group" aria-label="Filter projects by sector">
+      <button class="filter" data-f="all" aria-pressed="true">All</button>
+      <button class="filter" data-f="residential" aria-pressed="false">Residential</button>
+      <button class="filter" data-f="hospitality" aria-pressed="false">Hospitality</button>
+      <button class="filter" data-f="retail" aria-pressed="false">Retail</button>
+      <button class="filter" data-f="culture" aria-pressed="false">Art &amp; Culture</button>
+      <button class="filter" data-f="workspace" aria-pressed="false">Workspace</button>
+      <button class="filter" data-f="wellness" aria-pressed="false">Wellness</button>
+      <button class="filter" data-f="automotive" aria-pressed="false">Automotive</button>
+    </div>
+
+    <ul class="grid rise" id="grid">
+      <li class="card" data-sector="residential" data-title="Alarine Earth Home" data-credit="Zarine Jamshedji Architects" data-sector-label="Residential" data-plates="0,1,2,3">
+        <button class="card__btn" type="button" aria-label="Open Alarine Earth Home — Zarine Jamshedji Architects — 4 images">
+          <span class="card__ph"><img src="img/649a6b78b9a5-t.webp" alt="Alarine Earth Home — Zarine Jamshedji Architects" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">4</span></span>
+          <span class="card__meta"><span class="card__n">01</span><span><span class="card__t">Alarine Earth Home</span><span class="card__s">Zarine Jamshedji Architects</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="residential" data-title="Private Residence" data-credit="Edom Architects" data-sector-label="Residential" data-plates="4,5">
+        <button class="card__btn" type="button" aria-label="Open Private Residence — Edom Architects — 2 images">
+          <span class="card__ph"><img src="img/1c8f3f473a09-t.webp" alt="Private Residence — Edom Architects" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">02</span><span><span class="card__t">Private Residence</span><span class="card__s">Edom Architects</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="residential" data-title="Private Residence" data-credit="Durga Sarath Architects" data-sector-label="Residential" data-plates="6,7">
+        <button class="card__btn" type="button" aria-label="Open Private Residence — Durga Sarath Architects — 2 images">
+          <span class="card__ph"><img src="img/beb9c9b01cf5-t.webp" alt="Private Residence — Durga Sarath Architects" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">03</span><span><span class="card__t">Private Residence</span><span class="card__s">Durga Sarath Architects</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="residential" data-title="Private Residence" data-credit="Edom Architects" data-sector-label="Residential" data-plates="8,9,10">
+        <button class="card__btn" type="button" aria-label="Open Private Residence — Edom Architects — 3 images">
+          <span class="card__ph"><img src="img/796d10c2dfe7-t.webp" alt="Private Residence — Edom Architects" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">3</span></span>
+          <span class="card__meta"><span class="card__n">04</span><span><span class="card__t">Private Residence</span><span class="card__s">Edom Architects</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="residential" data-title="Private Residence" data-credit="Edom Architects" data-sector-label="Residential" data-plates="11,12">
+        <button class="card__btn" type="button" aria-label="Open Private Residence — Edom Architects — 2 images">
+          <span class="card__ph"><img src="img/5897c2fa3e9f-t.webp" alt="Private Residence — Edom Architects" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">05</span><span><span class="card__t">Private Residence</span><span class="card__s">Edom Architects</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="residential" data-title="Private Residence" data-credit="Roy Antony Architects" data-sector-label="Residential" data-plates="13,14">
+        <button class="card__btn" type="button" aria-label="Open Private Residence — Roy Antony Architects — 2 images">
+          <span class="card__ph"><img src="img/e506a534509f-t.webp" alt="Private Residence — Roy Antony Architects" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">06</span><span><span class="card__t">Private Residence</span><span class="card__s">Roy Antony Architects</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="residential" data-title="Private Residence" data-credit="Mindscape Architects" data-sector-label="Residential" data-plates="15,16">
+        <button class="card__btn" type="button" aria-label="Open Private Residence — Mindscape Architects — 2 images">
+          <span class="card__ph"><img src="img/ecad3cfeea41-t.webp" alt="Private Residence — Mindscape Architects" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">07</span><span><span class="card__t">Private Residence</span><span class="card__s">Mindscape Architects</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="residential" data-title="Private Residence" data-credit="AR Architects" data-sector-label="Residential" data-plates="17,18,19,20,21">
+        <button class="card__btn" type="button" aria-label="Open Private Residence — AR Architects — 5 images">
+          <span class="card__ph"><img src="img/969b50b0d406-t.webp" alt="Private Residence — AR Architects" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">5</span></span>
+          <span class="card__meta"><span class="card__n">08</span><span><span class="card__t">Private Residence</span><span class="card__s">AR Architects</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="hospitality" data-title="Mayabay" data-credit="Thrissur" data-sector-label="Hospitality" data-plates="22,23">
+        <button class="card__btn" type="button" aria-label="Open Mayabay — Thrissur — 2 images">
+          <span class="card__ph"><img src="img/49efeb0cb184-t.webp" alt="Mayabay — Thrissur" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">09</span><span><span class="card__t">Mayabay</span><span class="card__s">Thrissur</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="hospitality" data-title="Lucid" data-credit="Kakkanad" data-sector-label="Hospitality" data-plates="24,25">
+        <button class="card__btn" type="button" aria-label="Open Lucid — Kakkanad — 2 images">
+          <span class="card__ph"><img src="img/8f7083565188-t.webp" alt="Lucid — Kakkanad" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">10</span><span><span class="card__t">Lucid</span><span class="card__s">Kakkanad</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="hospitality" data-title="Half Full" data-credit="Kolkota" data-sector-label="Hospitality" data-plates="26,27">
+        <button class="card__btn" type="button" aria-label="Open Half Full — Kolkota — 2 images">
+          <span class="card__ph"><img src="img/46c779ddef29-t.webp" alt="Half Full — Kolkota" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">11</span><span><span class="card__t">Half Full</span><span class="card__s">Kolkota</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="hospitality" data-title="Hortus Malabar" data-credit="Panampilly Nagar" data-sector-label="Hospitality" data-plates="28,29,30,31,32,33">
+        <button class="card__btn" type="button" aria-label="Open Hortus Malabar — Panampilly Nagar — 6 images">
+          <span class="card__ph"><img src="img/5b8c054fb9f9-t.webp" alt="Hortus Malabar — Panampilly Nagar" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">6</span></span>
+          <span class="card__meta"><span class="card__n">12</span><span><span class="card__t">Hortus Malabar</span><span class="card__s">Panampilly Nagar</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="hospitality" data-title="Springs" data-credit="The Avenue Regent Hotel" data-sector-label="Hospitality" data-plates="34,35">
+        <button class="card__btn" type="button" aria-label="Open Springs — The Avenue Regent Hotel — 2 images">
+          <span class="card__ph"><img src="img/80def9b1f77f-t.webp" alt="Springs — The Avenue Regent Hotel" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">13</span><span><span class="card__t">Springs</span><span class="card__s">The Avenue Regent Hotel</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="hospitality" data-title="Food Court" data-credit="Kerala" data-sector-label="Hospitality" data-plates="36,37">
+        <button class="card__btn" type="button" aria-label="Open Food Court — Kerala — 2 images">
+          <span class="card__ph"><img src="img/43e43412c8c9-t.webp" alt="Food Court — Kerala" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">14</span><span><span class="card__t">Food Court</span><span class="card__s">Kerala</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="hospitality" data-title="Restaurant" data-credit="Kochi" data-sector-label="Hospitality" data-plates="38,39">
+        <button class="card__btn" type="button" aria-label="Open Restaurant — Kochi — 2 images">
+          <span class="card__ph"><img src="img/e4b196136c39-t.webp" alt="Restaurant — Kochi" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">15</span><span><span class="card__t">Restaurant</span><span class="card__s">Kochi</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="hospitality" data-title="The Palazzo" data-credit="Thrissur" data-sector-label="Hospitality" data-plates="40,41,42">
+        <button class="card__btn" type="button" aria-label="Open The Palazzo — Thrissur — 3 images">
+          <span class="card__ph"><img src="img/98773883473d-t.webp" alt="The Palazzo — Thrissur" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">3</span></span>
+          <span class="card__meta"><span class="card__n">16</span><span><span class="card__t">The Palazzo</span><span class="card__s">Thrissur</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="hospitality" data-title="Boutique Resort" data-credit="Kerala" data-sector-label="Hospitality" data-plates="43,44">
+        <button class="card__btn" type="button" aria-label="Open Boutique Resort — Kerala — 2 images">
+          <span class="card__ph"><img src="img/011a94de49d5-t.webp" alt="Boutique Resort — Kerala" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">17</span><span><span class="card__t">Boutique Resort</span><span class="card__s">Kerala</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="culture" data-title="Art Gallery" data-credit="Kollam" data-sector-label="Art &amp; Culture" data-plates="45,46,47,48,49,50">
+        <button class="card__btn" type="button" aria-label="Open Art Gallery — Kollam — 6 images">
+          <span class="card__ph"><img src="img/4b22625a1c29-t.webp" alt="Art Gallery — Kollam" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">6</span></span>
+          <span class="card__meta"><span class="card__n">18</span><span><span class="card__t">Art Gallery</span><span class="card__s">Kollam</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="culture" data-title="Nosh House" data-credit="Art Gallery" data-sector-label="Art &amp; Culture" data-plates="51,52,53,54,55">
+        <button class="card__btn" type="button" aria-label="Open Nosh House — Art Gallery — 5 images">
+          <span class="card__ph"><img src="img/56011698e163-t.webp" alt="Nosh House — Art Gallery" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">5</span></span>
+          <span class="card__meta"><span class="card__n">19</span><span><span class="card__t">Nosh House</span><span class="card__s">Art Gallery</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="retail" data-title="Pureallure" data-credit="CCC" data-sector-label="Retail" data-plates="56,57,58">
+        <button class="card__btn" type="button" aria-label="Open Pureallure — CCC — 3 images">
+          <span class="card__ph"><img src="img/d61fce5c6772-t.webp" alt="Pureallure — CCC" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">3</span></span>
+          <span class="card__meta"><span class="card__n">20</span><span><span class="card__t">Pureallure</span><span class="card__s">CCC</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="retail" data-title="Swag" data-credit="Seematti" data-sector-label="Retail" data-plates="59,60,61,62,63,64,65,66,67,68">
+        <button class="card__btn" type="button" aria-label="Open Swag — Seematti — 10 images">
+          <span class="card__ph"><img src="img/05a61285fc6a-t.webp" alt="Swag — Seematti" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">10</span></span>
+          <span class="card__meta"><span class="card__n">21</span><span><span class="card__t">Swag</span><span class="card__s">Seematti</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="retail" data-title="Seematti Juniors" data-credit="Kerala" data-sector-label="Retail" data-plates="69,70">
+        <button class="card__btn" type="button" aria-label="Open Seematti Juniors — Kerala — 2 images">
+          <span class="card__ph"><img src="img/a26a5adb4cfc-t.webp" alt="Seematti Juniors — Kerala" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">22</span><span><span class="card__t">Seematti Juniors</span><span class="card__s">Kerala</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="workspace" data-title="Mane Kancore" data-credit="Angamaly" data-sector-label="Workspace" data-plates="71,72,73,74,75,76">
+        <button class="card__btn" type="button" aria-label="Open Mane Kancore — Angamaly — 6 images">
+          <span class="card__ph"><img src="img/42c159e22f8c-t.webp" alt="Mane Kancore — Angamaly" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">6</span></span>
+          <span class="card__meta"><span class="card__n">23</span><span><span class="card__t">Mane Kancore</span><span class="card__s">Angamaly</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="workspace" data-title="Business Bureau" data-credit="Panampilly Nagar" data-sector-label="Workspace" data-plates="77,78">
+        <button class="card__btn" type="button" aria-label="Open Business Bureau — Panampilly Nagar — 2 images">
+          <span class="card__ph"><img src="img/83f96c68dd1c-t.webp" alt="Business Bureau — Panampilly Nagar" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">24</span><span><span class="card__t">Business Bureau</span><span class="card__s">Panampilly Nagar</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="workspace" data-title="Transasia Cyber Park" data-credit="Kochi" data-sector-label="Workspace" data-plates="79,80,81">
+        <button class="card__btn" type="button" aria-label="Open Transasia Cyber Park — Kochi — 3 images">
+          <span class="card__ph"><img src="img/4fd4484cf0c6-t.webp" alt="Transasia Cyber Park — Kochi" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">3</span></span>
+          <span class="card__meta"><span class="card__n">25</span><span><span class="card__t">Transasia Cyber Park</span><span class="card__s">Kochi</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="wellness" data-title="Wellness Centre" data-credit="Calicut" data-sector-label="Wellness" data-plates="82,83">
+        <button class="card__btn" type="button" aria-label="Open Wellness Centre — Calicut — 2 images">
+          <span class="card__ph"><img src="img/7bd0548e89ca-t.webp" alt="Wellness Centre — Calicut" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">26</span><span><span class="card__t">Wellness Centre</span><span class="card__s">Calicut</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="wellness" data-title="D&#x27;Arc Gym" data-credit="Palarivattam" data-sector-label="Wellness" data-plates="84,85,86">
+        <button class="card__btn" type="button" aria-label="Open D&#x27;Arc Gym — Palarivattam — 3 images">
+          <span class="card__ph"><img src="img/f85922008457-t.webp" alt="D&#x27;Arc Gym — Palarivattam" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">3</span></span>
+          <span class="card__meta"><span class="card__n">27</span><span><span class="card__t">D&#x27;Arc Gym</span><span class="card__s">Palarivattam</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="wellness" data-title="Anti Ageing Lab" data-credit="Kaloor" data-sector-label="Wellness" data-plates="87,88">
+        <button class="card__btn" type="button" aria-label="Open Anti Ageing Lab — Kaloor — 2 images">
+          <span class="card__ph"><img src="img/d5420cb9f940-t.webp" alt="Anti Ageing Lab — Kaloor" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">28</span><span><span class="card__t">Anti Ageing Lab</span><span class="card__s">Kaloor</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="automotive" data-title="Mercedes-Benz" data-credit="Showroom" data-sector-label="Automotive" data-plates="89,90,91">
+        <button class="card__btn" type="button" aria-label="Open Mercedes-Benz — Showroom — 3 images">
+          <span class="card__ph"><img src="img/2aeffca6e1b3-t.webp" alt="Mercedes-Benz — Showroom" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">3</span></span>
+          <span class="card__meta"><span class="card__n">29</span><span><span class="card__t">Mercedes-Benz</span><span class="card__s">Showroom</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="automotive" data-title="Car Showroom" data-credit="Kerala" data-sector-label="Automotive" data-plates="92,93">
+        <button class="card__btn" type="button" aria-label="Open Car Showroom — Kerala — 2 images">
+          <span class="card__ph"><img src="img/11dc9f2b7302-t.webp" alt="Car Showroom — Kerala" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">30</span><span><span class="card__t">Car Showroom</span><span class="card__s">Kerala</span></span></span>
+        </button>
+      </li>
+      <li class="card" data-sector="automotive" data-title="Ather Showroom" data-credit="Kochi" data-sector-label="Automotive" data-plates="94,95">
+        <button class="card__btn" type="button" aria-label="Open Ather Showroom — Kochi — 2 images">
+          <span class="card__ph"><img src="img/e534d6bb0d35-t.webp" alt="Ather Showroom — Kochi" loading="lazy" decoding="async" width="900" height="675"><span class="card__count">2</span></span>
+          <span class="card__meta"><span class="card__n">31</span><span><span class="card__t">Ather Showroom</span><span class="card__s">Kochi</span></span></span>
+        </button>
+      </li>
+    </ul>
+    <p class="count" id="count" aria-live="polite"></p>
+  </div>
+</section>
+
+<!-- ══════════ EARTH SERIES ══════════ -->
+<section class="band" id="earth" aria-labelledby="earth-h">
+  <div class="wrap">
+    <div class="eyebrow rise">
+      <span class="u-mono" id="earth-h">07 — Interstellar Life</span>
+      <span class="u-mono eyebrow__k">Earth series</span>
+    </div>
+    <div class="mat rise">
+      <div class="prose">
+        <h2 class="u-disp" style="font-size:clamp(28px,4.4vw,60px);margin-bottom:20px">Down to earth.</h2>
+        <p class="u-lede" style="margin-bottom:20px">A series drawn entirely from natural material — light housed in things that age well.</p>
+        <p>We experiment with texture the way a joiner does: sampling, finishing, rejecting. What survives becomes a fitting.</p>
+        <ul class="mat__list">
+          <li><b>Wood</b><span>Turned · oiled</span></li>
+          <li><b>Ceramic</b><span>Glazed · matte</span></li>
+          <li><b>Stone</b><span>Natural · honed</span></li>
+          <li><b>Concrete</b><span>Cast · board-formed</span></li>
+          <li><b>Fabric</b><span>Woven diffusers</span></li>
+          <li><b>Bamboo &amp; cane</b><span>Hand-worked</span></li>
+        </ul>
+      </div>
+      <figure class="split__fig">
+        <img src="img/03f3f3250728.webp" alt="Detail of a hand-worked material sample used in the Earth series." width="922" height="1383" loading="lazy" decoding="async">
+        <figcaption class="split__cap"><i aria-hidden="true"></i><span>Material sampling · Studio</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ QUOTE ══════════ -->
+<section class="band band--tight band--shell" aria-label="Why work with us">
+  <div class="wrap">
+    <figure class="quote rise">
+      <blockquote>We create with passion and creativity, supporting the design community from concept to engineering and manufacturing.</blockquote>
+      <figcaption class="u-mono">Interstellar Lighting — Why work with us</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ══════════ CONTACT ══════════ -->
+<section class="band cta" id="contact" aria-labelledby="cta-h">
+  <div class="wrap">
+    <div class="cta__grid">
+      <div class="rise">
+        <span class="u-mono" style="display:block;margin-bottom:22px">08 — Start a project</span>
+        <h2 id="cta-h">Send us your floor plan.</h2>
+        <p class="cta__note">Our designers will work through the layout with you and integrate it with the control system — more colour in your space, at the same brightness, with fewer fittings than you would normally need.</p>
+      </div>
+      <div class="rise">
+        <ul class="contacts">
+          <li><a href="mailto:info@interstellarstudio.in"><span class="u-mono">Email</span><b>info@interstellarstudio.in</b></a></li>
+          <li><a href="tel:+919747729200"><span class="u-mono">Phone</span><b>+91 97477 29200</b></a></li>
+          <li><a href="tel:+919744779922"><span class="u-mono">Phone</span><b>+91 97447 79922</b></a></li>
+          <li><a href="#projects"><span class="u-mono">Studio</span><b>Kochi, Kerala, India</b></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <div class="colophon">
+    <span class="u-mono">© 2026 Interstellar Lighting</span>
+    <span class="u-mono">Design Profile · Kochi, Kerala</span>
+  </div>
+</footer>
+
+</main>
+</div>
+
+<!-- ══════════ LIGHTBOX ══════════ -->
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+  <div class="lb__bar">
+    <span class="u-mono" id="lbIndex"></span>
+    <div class="lb__nav">
+      <button type="button" id="lbPrev" aria-label="Previous project">←</button>
+      <button type="button" id="lbNext" aria-label="Next project">→</button>
+      <button type="button" class="lb__x" id="lbClose" aria-label="Close">✕</button>
+    </div>
+  </div>
+  <div class="lb__stage"><img id="lbImg" alt=""></div>
+  <div class="lb__cap">
+    <b id="lbTitle"></b>
+    <span class="u-mono" id="lbSector"></span>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------------------------------------------------
+   DAY / DARK TOGGLE
+   --------------------------------------------------------- */
+(function(){
+  var root=document.documentElement;
+  var btns=[document.getElementById("modeToggle"), document.getElementById("modeToggleRail")];
+  var labels=[document.getElementById("modeToggleLabel"), document.getElementById("modeToggleRailLabel")];
+  var schemeMeta=document.querySelector('meta[name="color-scheme"]');
+  var colorMeta=document.querySelector('meta[name="theme-color"]');
+  var STORE_KEY="interstellar-mode";
+
+  function isDay(){ return root.getAttribute("data-theme")==="meshle"; }
+
+  function apply(day, persist){
+    if(day){
+      root.setAttribute("data-theme","meshle");
+      if(schemeMeta) schemeMeta.setAttribute("content","light");
+      if(colorMeta) colorMeta.setAttribute("content","#FBF6EF");
+    } else {
+      root.removeAttribute("data-theme");
+      if(schemeMeta) schemeMeta.setAttribute("content","dark");
+      if(colorMeta) colorMeta.setAttribute("content","#08090A");
+    }
+    btns.forEach(function(b){ if(b) b.setAttribute("aria-pressed", String(day)); });
+    btns.forEach(function(b){ if(b) b.setAttribute("aria-label", day ? "Switch to dark mode" : "Switch to day mode"); });
+    labels.forEach(function(l){ if(l) l.textContent = day ? "Day" : "Dark"; });
+    if(persist){
+      try{ localStorage.setItem(STORE_KEY, day ? "meshle" : "dark"); }catch(e){}
+    }
+  }
+
+  function toggle(){ apply(!isDay(), true); }
+  btns.forEach(function(b){ if(b) b.addEventListener("click", toggle); });
+
+  var saved=null;
+  try{ saved=localStorage.getItem(STORE_KEY); }catch(e){}
+  if(saved==="meshle") apply(true, false);
+  else if(saved==="dark") apply(false, false);
+  else apply(isDay(), false);
+})();
+
+/* ---------------------------------------------------------
+   SCROLL REVEAL + RAIL STATE
+   --------------------------------------------------------- */
+var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+if ("IntersectionObserver" in window && !reduce){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting){ en.target.classList.add("lit"); io.unobserve(en.target); }
+    });
+  }, {rootMargin:"0px 0px -12% 0px", threshold:0.06});
+  document.querySelectorAll(".rise").forEach(function(el){ io.observe(el); });
+} else {
+  document.querySelectorAll(".rise").forEach(function(el){ el.classList.add("lit"); });
+}
+
+/* Failsafe: nothing on this page may stay invisible because of a script.
+   If the observer has not lit an element within 1.2s, light it anyway. */
+window.setTimeout(function(){
+  document.querySelectorAll(".rise:not(.lit)").forEach(function(el){ el.classList.add("lit"); });
+}, 1200);
+
+var railBtns = Array.prototype.slice.call(document.querySelectorAll(".rail__btn"));
+railBtns.forEach(function(b){
+  b.addEventListener("click", function(){
+    var el = document.getElementById(b.dataset.to);
+    if (el) el.scrollIntoView({behavior: reduce ? "auto" : "smooth", block:"start"});
+  });
+});
+
+if ("IntersectionObserver" in window){
+  var spy = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (!en.isIntersecting) return;
+      railBtns.forEach(function(b){
+        b.setAttribute("aria-current", String(b.dataset.to === en.target.id));
+      });
+    });
+  }, {rootMargin:"-45% 0px -45% 0px"});
+  ["top","practice","disciplines","light","circadian","types","projects","earth","contact"].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) spy.observe(el);
+  });
+}
+
+/* ---------------------------------------------------------
+   PROJECT INDEX — markup ships in the HTML; JS only enhances it
+   --------------------------------------------------------- */
+var grid    = document.getElementById("grid");
+var cards   = Array.prototype.slice.call(grid.children);
+var btns    = cards.map(function(c){ return c.querySelector(".card__btn"); });
+var countEl = document.getElementById("count");
+
+function setCount(n){
+  var plates=visiblePlates().length;
+  countEl.textContent = "Showing " + n + (n===1?" project":" projects") + " \u00B7 " + plates + " images \u00B7 1200+ completed";
+}
+setCount(cards.length);
+
+/* ---------------------------------------------------------
+   FILTERS
+   --------------------------------------------------------- */
+var filters = Array.prototype.slice.call(document.querySelectorAll(".filter"));
+var cards   = Array.prototype.slice.call(grid.children);
+
+filters.forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var f = btn.dataset.f;
+    filters.forEach(function(b){ b.setAttribute("aria-pressed", String(b === btn)); });
+    var shown = 0;
+    cards.forEach(function(c){
+      var ok = (f === "all" || c.dataset.sector === f);
+      c.hidden = !ok;
+      if (ok) shown++;
+    });
+    setCount(shown);
+  });
+});
+
+/* ---------------------------------------------------------
+   LIGHTBOX — every project carries all of its plates
+   --------------------------------------------------------- */
+var PLATES = [{"s": "img/649a6b78b9a5.webp", "t": "Alarine Earth Home", "c": "Zarine Jamshedji Architects", "k": "Residential"}, {"s": "img/97f3777d1776.webp", "t": "Alarine Earth Home", "c": "Zarine Jamshedji Architects", "k": "Residential"}, {"s": "img/caeedb0b8779.webp", "t": "Alarine Earth Home", "c": "Zarine Jamshedji Architects", "k": "Residential"}, {"s": "img/780e539349fe.webp", "t": "Alarine Earth Home", "c": "Zarine Jamshedji Architects", "k": "Residential"}, {"s": "img/1c8f3f473a09.webp", "t": "Private Residence", "c": "Edom Architects", "k": "Residential"}, {"s": "img/b12ba5bd63c0.webp", "t": "Private Residence", "c": "Edom Architects", "k": "Residential"}, {"s": "img/beb9c9b01cf5.webp", "t": "Private Residence", "c": "Durga Sarath Architects", "k": "Residential"}, {"s": "img/06651b015b1b.webp", "t": "Private Residence", "c": "Durga Sarath Architects", "k": "Residential"}, {"s": "img/796d10c2dfe7.webp", "t": "Private Residence", "c": "Edom Architects", "k": "Residential"}, {"s": "img/dd25077f97df.webp", "t": "Private Residence", "c": "Edom Architects", "k": "Residential"}, {"s": "img/1a9f64ca2208.webp", "t": "Private Residence", "c": "Edom Architects", "k": "Residential"}, {"s": "img/5897c2fa3e9f.webp", "t": "Private Residence", "c": "Edom Architects", "k": "Residential"}, {"s": "img/daa3d7647fc0.webp", "t": "Private Residence", "c": "Edom Architects", "k": "Residential"}, {"s": "img/e506a534509f.webp", "t": "Private Residence", "c": "Roy Antony Architects", "k": "Residential"}, {"s": "img/b914435823bd.webp", "t": "Private Residence", "c": "Roy Antony Architects", "k": "Residential"}, {"s": "img/ecad3cfeea41.webp", "t": "Private Residence", "c": "Mindscape Architects", "k": "Residential"}, {"s": "img/48f32d966bb8.webp", "t": "Private Residence", "c": "Mindscape Architects", "k": "Residential"}, {"s": "img/969b50b0d406.webp", "t": "Private Residence", "c": "AR Architects", "k": "Residential"}, {"s": "img/8ffe7653fe20.webp", "t": "Private Residence", "c": "AR Architects", "k": "Residential"}, {"s": "img/8f6b8c431874.webp", "t": "Private Residence", "c": "AR Architects", "k": "Residential"}, {"s": "img/6c1a9b78e26d.webp", "t": "Private Residence", "c": "AR Architects", "k": "Residential"}, {"s": "img/74ee8e563d3c.webp", "t": "Private Residence", "c": "AR Architects", "k": "Residential"}, {"s": "img/49efeb0cb184.webp", "t": "Mayabay", "c": "Thrissur", "k": "Hospitality"}, {"s": "img/fe4cf6d795d6.webp", "t": "Mayabay", "c": "Thrissur", "k": "Hospitality"}, {"s": "img/8f7083565188.webp", "t": "Lucid", "c": "Kakkanad", "k": "Hospitality"}, {"s": "img/a85133d0958d.webp", "t": "Lucid", "c": "Kakkanad", "k": "Hospitality"}, {"s": "img/46c779ddef29.webp", "t": "Half Full", "c": "Kolkota", "k": "Hospitality"}, {"s": "img/737abaa300f7.webp", "t": "Half Full", "c": "Kolkota", "k": "Hospitality"}, {"s": "img/5b8c054fb9f9.webp", "t": "Hortus Malabar", "c": "Panampilly Nagar", "k": "Hospitality"}, {"s": "img/0d70fd341e62.webp", "t": "Hortus Malabar", "c": "Panampilly Nagar", "k": "Hospitality"}, {"s": "img/ebbc5e9715c2.webp", "t": "Hortus Malabar", "c": "Panampilly Nagar", "k": "Hospitality"}, {"s": "img/4a5674bcddee.webp", "t": "Hortus Malabar", "c": "Panampilly Nagar", "k": "Hospitality"}, {"s": "img/b69589607b04.webp", "t": "Hortus Malabar", "c": "Panampilly Nagar", "k": "Hospitality"}, {"s": "img/b3e8c3fa4dc2.webp", "t": "Hortus Malabar", "c": "Panampilly Nagar", "k": "Hospitality"}, {"s": "img/80def9b1f77f.webp", "t": "Springs", "c": "The Avenue Regent Hotel", "k": "Hospitality"}, {"s": "img/5d86f1fbc68a.webp", "t": "Springs", "c": "The Avenue Regent Hotel", "k": "Hospitality"}, {"s": "img/43e43412c8c9.webp", "t": "Food Court", "c": "Kerala", "k": "Hospitality"}, {"s": "img/1e32135c7226.webp", "t": "Food Court", "c": "Kerala", "k": "Hospitality"}, {"s": "img/e4b196136c39.webp", "t": "Restaurant", "c": "Kochi", "k": "Hospitality"}, {"s": "img/b088e1a4756e.webp", "t": "Restaurant", "c": "Kochi", "k": "Hospitality"}, {"s": "img/98773883473d.webp", "t": "The Palazzo", "c": "Thrissur", "k": "Hospitality"}, {"s": "img/972ded1f4d70.webp", "t": "The Palazzo", "c": "Thrissur", "k": "Hospitality"}, {"s": "img/42e69cde6c3e.webp", "t": "The Palazzo", "c": "Thrissur", "k": "Hospitality"}, {"s": "img/011a94de49d5.webp", "t": "Boutique Resort", "c": "Kerala", "k": "Hospitality"}, {"s": "img/892ef8ba6ae1.webp", "t": "Boutique Resort", "c": "Kerala", "k": "Hospitality"}, {"s": "img/4b22625a1c29.webp", "t": "Art Gallery", "c": "Kollam", "k": "Art &amp; Culture"}, {"s": "img/68cb13b0e415.webp", "t": "Art Gallery", "c": "Kollam", "k": "Art &amp; Culture"}, {"s": "img/cb29da95aa83.webp", "t": "Art Gallery", "c": "Kollam", "k": "Art &amp; Culture"}, {"s": "img/cd300412c1eb.webp", "t": "Art Gallery", "c": "Kollam", "k": "Art &amp; Culture"}, {"s": "img/9f909b29e93a.webp", "t": "Art Gallery", "c": "Kollam", "k": "Art &amp; Culture"}, {"s": "img/38d7c95279c9.webp", "t": "Art Gallery", "c": "Kollam", "k": "Art &amp; Culture"}, {"s": "img/56011698e163.webp", "t": "Nosh House", "c": "Art Gallery", "k": "Art &amp; Culture"}, {"s": "img/63195cffe0b3.webp", "t": "Nosh House", "c": "Art Gallery", "k": "Art &amp; Culture"}, {"s": "img/f254fc8ef958.webp", "t": "Nosh House", "c": "Art Gallery", "k": "Art &amp; Culture"}, {"s": "img/e855ff31695f.webp", "t": "Nosh House", "c": "Art Gallery", "k": "Art &amp; Culture"}, {"s": "img/4be88f51b1a9.webp", "t": "Nosh House", "c": "Art Gallery", "k": "Art &amp; Culture"}, {"s": "img/d61fce5c6772.webp", "t": "Pureallure", "c": "CCC", "k": "Retail"}, {"s": "img/8712eaa917cf.webp", "t": "Pureallure", "c": "CCC", "k": "Retail"}, {"s": "img/1ee8c14821d4.webp", "t": "Pureallure", "c": "CCC", "k": "Retail"}, {"s": "img/05a61285fc6a.webp", "t": "Swag", "c": "Seematti", "k": "Retail"}, {"s": "img/7e1bf200e72c.webp", "t": "Swag", "c": "Seematti", "k": "Retail"}, {"s": "img/87b2c3e0da63.webp", "t": "Swag", "c": "Seematti", "k": "Retail"}, {"s": "img/b67f0cdda0a1.webp", "t": "Swag", "c": "Seematti", "k": "Retail"}, {"s": "img/5b84a3792a61.webp", "t": "Swag", "c": "Seematti", "k": "Retail"}, {"s": "img/e431128e4b64.webp", "t": "Swag", "c": "Seematti", "k": "Retail"}, {"s": "img/0a1428c28d59.webp", "t": "Swag", "c": "Seematti", "k": "Retail"}, {"s": "img/a2b42a70d14d.webp", "t": "Swag", "c": "Seematti", "k": "Retail"}, {"s": "img/52c1b8856fd9.webp", "t": "Swag", "c": "Seematti", "k": "Retail"}, {"s": "img/0ad5503ea8a3.webp", "t": "Swag", "c": "Seematti", "k": "Retail"}, {"s": "img/a26a5adb4cfc.webp", "t": "Seematti Juniors", "c": "Kerala", "k": "Retail"}, {"s": "img/014bf77a0417.webp", "t": "Seematti Juniors", "c": "Kerala", "k": "Retail"}, {"s": "img/42c159e22f8c.webp", "t": "Mane Kancore", "c": "Angamaly", "k": "Workspace"}, {"s": "img/f28b04c3ab2b.webp", "t": "Mane Kancore", "c": "Angamaly", "k": "Workspace"}, {"s": "img/f6588a847e54.webp", "t": "Mane Kancore", "c": "Angamaly", "k": "Workspace"}, {"s": "img/7297ef6c9fbe.webp", "t": "Mane Kancore", "c": "Angamaly", "k": "Workspace"}, {"s": "img/55cc1ff02cf0.webp", "t": "Mane Kancore", "c": "Angamaly", "k": "Workspace"}, {"s": "img/3c25d5853d01.webp", "t": "Mane Kancore", "c": "Angamaly", "k": "Workspace"}, {"s": "img/83f96c68dd1c.webp", "t": "Business Bureau", "c": "Panampilly Nagar", "k": "Workspace"}, {"s": "img/7e3883aa181d.webp", "t": "Business Bureau", "c": "Panampilly Nagar", "k": "Workspace"}, {"s": "img/4fd4484cf0c6.webp", "t": "Transasia Cyber Park", "c": "Kochi", "k": "Workspace"}, {"s": "img/cb6cbf2be9df.webp", "t": "Transasia Cyber Park", "c": "Kochi", "k": "Workspace"}, {"s": "img/7db842367885.webp", "t": "Transasia Cyber Park", "c": "Kochi", "k": "Workspace"}, {"s": "img/7bd0548e89ca.webp", "t": "Wellness Centre", "c": "Calicut", "k": "Wellness"}, {"s": "img/98f93aed1030.webp", "t": "Wellness Centre", "c": "Calicut", "k": "Wellness"}, {"s": "img/f85922008457.webp", "t": "D'Arc Gym", "c": "Palarivattam", "k": "Wellness"}, {"s": "img/db0d027df709.webp", "t": "D'Arc Gym", "c": "Palarivattam", "k": "Wellness"}, {"s": "img/25e097fa3fd2.webp", "t": "D'Arc Gym", "c": "Palarivattam", "k": "Wellness"}, {"s": "img/d5420cb9f940.webp", "t": "Anti Ageing Lab", "c": "Kaloor", "k": "Wellness"}, {"s": "img/140e6b25aba7.webp", "t": "Anti Ageing Lab", "c": "Kaloor", "k": "Wellness"}, {"s": "img/2aeffca6e1b3.webp", "t": "Mercedes-Benz", "c": "Showroom", "k": "Automotive"}, {"s": "img/d4fe85cefb22.webp", "t": "Mercedes-Benz", "c": "Showroom", "k": "Automotive"}, {"s": "img/cda7aca96887.webp", "t": "Mercedes-Benz", "c": "Showroom", "k": "Automotive"}, {"s": "img/11dc9f2b7302.webp", "t": "Car Showroom", "c": "Kerala", "k": "Automotive"}, {"s": "img/e985f5f31048.webp", "t": "Car Showroom", "c": "Kerala", "k": "Automotive"}, {"s": "img/e534d6bb0d35.webp", "t": "Ather Showroom", "c": "Kochi", "k": "Automotive"}, {"s": "img/16b3fbbe7fad.webp", "t": "Ather Showroom", "c": "Kochi", "k": "Automotive"}];
+
+var lb=document.getElementById("lb"), lbImg=document.getElementById("lbImg"),
+    lbTitle=document.getElementById("lbTitle"), lbSector=document.getElementById("lbSector"),
+    lbIndex=document.getElementById("lbIndex"), current=0, lastFocus=null;
+
+function platesOf(card){
+  return (card.dataset.plates||"").split(",").filter(Boolean).map(Number);
+}
+/* plates belonging to projects currently passing the filter, in index order */
+function visiblePlates(){
+  var out=[];
+  cards.forEach(function(c){ if(!c.hidden) out=out.concat(platesOf(c)); });
+  return out;
+}
+function show(i){
+  current=i;
+  var p=PLATES[i];
+  lbImg.src=p.s;
+  lbImg.alt=p.t+" — "+p.c;
+  lbTitle.textContent=p.t;
+  lbSector.textContent=p.c+" \u00B7 "+p.k;
+  var vis=visiblePlates(), at=vis.indexOf(i);
+  lbIndex.textContent=(at<0?1:at+1)+" / "+vis.length;
+}
+function openLb(i){
+  lastFocus=document.activeElement;
+  show(i);
+  lb.hidden=false;
+  document.body.style.overflow="hidden";
+  document.getElementById("lbClose").focus();
+}
+function closeLb(){
+  lb.hidden=true;
+  document.body.style.overflow="";
+  if(lastFocus) lastFocus.focus();
+}
+function step(d){
+  var vis=visiblePlates();
+  if(!vis.length) return;
+  var at=vis.indexOf(current);
+  if(at===-1) at=0;
+  show(vis[(at+d+vis.length)%vis.length]);
+}
+
+btns.forEach(function(b,i){
+  b.addEventListener("click", function(){
+    var ids=platesOf(cards[i]);
+    openLb(ids.length?ids[0]:0);
+  });
+});
+document.getElementById("lbClose").addEventListener("click", closeLb);
+document.getElementById("lbPrev").addEventListener("click", function(){ step(-1); });
+document.getElementById("lbNext").addEventListener("click", function(){ step(1); });
+lb.addEventListener("click", function(e){ if(e.target===lb) closeLb(); });
+
+document.addEventListener("keydown", function(e){
+  if(lb.hidden) return;
+  if(e.key==="Escape") closeLb();
+  else if(e.key==="ArrowLeft") step(-1);
+  else if(e.key==="ArrowRight") step(1);
+  else if(e.key==="Tab"){
+    var f=lb.querySelectorAll("button"), first=f[0], last=f[f.length-1];
+    if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+  }
+});
+
+/* ---------------------------------------------------------
+   THE KELVIN CONSOLE
+   --------------------------------------------------------- */
+var range = document.getElementById("kRange"),
+    kVal  = document.getElementById("kValue"),
+    kDesc = document.getElementById("kDesc"),
+    tint  = document.getElementById("tint"),
+    tint2 = document.getElementById("tint2"),
+    stage = document.getElementById("stage");
+
+/* Blackbody approximation (Tanner Helland), clamped to the usable range. */
+function kelvinRGB(k){
+  var t = k / 100, r, g, b;
+  if (t <= 66){
+    r = 255;
+    g = 99.4708025861 * Math.log(t) - 161.1195681661;
+    b = t <= 19 ? 0 : 138.5177312231 * Math.log(t - 10) - 305.0447927307;
+  } else {
+    r = 329.698727446 * Math.pow(t - 60, -0.1332047592);
+    g = 288.1221695283 * Math.pow(t - 60, -0.0755148492);
+    b = 255;
+  }
+  function cl(v){ return Math.max(0, Math.min(255, Math.round(v))); }
+  return [cl(r), cl(g), cl(b)];
+}
+
+var BANDS = [
+  {max:2200, n:"Candlelight",     d:"The lowest useful register. Flame-like and intimate — used sparingly, for atmosphere rather than for seeing by."},
+  {max:2800, n:"Incandescent",    d:"The warmth of a tungsten filament. Forgiving on skin and timber, and still the most requested temperature in Indian homes."},
+  {max:3400, n:"Warm white",      d:"Relaxed and residential. The default for dining rooms, bedrooms and hospitality, where skin tones and timber need to stay flattering."},
+  {max:4200, n:"Neutral white",   d:"Balanced and unbiased. Renders colour honestly without going clinical — the safe register for retail, galleries and mixed-use rooms."},
+  {max:5200, n:"Cool white",      d:"Alert and clean. Suited to workspaces, kitchens and task areas where accuracy matters more than atmosphere."},
+  {max:6500, n:"Overcast daylight", d:"The coldest register we specify. Reserved for industrial, laboratory and inspection work — never for a room people relax in."}
+];
+
+function band(k){
+  for (var i = 0; i < BANDS.length; i++) if (k <= BANDS[i].max) return BANDS[i];
+  return BANDS[BANDS.length - 1];
+}
+
+function apply(k){
+  var rgb  = kelvinRGB(k),
+      css  = "rgb(" + rgb.join(",") + ")",
+      b    = band(k),
+      warm = Math.max(0, Math.min(1, (4000 - k) / 2000));
+
+  /* On paper, a 2700K blackbody value (255,169,87) is far too pale to read as
+     text. --readout-dim scales it down for the light theme and is 1 on dark. */
+  var dim = parseFloat(getComputedStyle(document.documentElement)
+              .getPropertyValue("--readout-dim")) || 1;
+  var txt = "rgb(" + rgb.map(function(v){ return Math.round(v * dim); }).join(",") + ")";
+
+  kVal.textContent = k;
+  kVal.style.color = txt;
+  tint.style.background = css;
+  tint.style.opacity = 0.55;
+  tint2.style.background = css;
+  stage.style.filter = "saturate(" + (0.86 + warm * 0.3).toFixed(2) +
+                       ") brightness(" + (0.9 + warm * 0.12).toFixed(2) + ")";
+  kDesc.innerHTML = "<b>" + b.n + "</b>" + b.d;
+  range.setAttribute("aria-valuetext", k + " kelvin, " + b.n.toLowerCase());
+}
+
+range.addEventListener("input", function(){ apply(parseInt(range.value, 10)); });
+apply(parseInt(range.value, 10));
+
+})();
+</script>
+</body>
+</html>
